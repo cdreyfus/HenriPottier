@@ -5,11 +5,22 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.greenrobot.greendao.AbstractDaoMaster;
+import org.greenrobot.greendao.database.Database;
+
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import cdreyfus.xebia_henri_potier.logs.FileLoggingTree;
+import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.models.DaoMaster;
+import cdreyfus.xebia_henri_potier.models.DaoSession;
+import cdreyfus.xebia_henri_potier.models.adapters.BookAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -19,28 +30,42 @@ import timber.log.Timber;
 
 public class HenriPotierApplication extends Application{
 
-    protected Retrofit mRetrofit;
+    private DaoSession mDaoSession;
+    private Retrofit mRetrofit;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Stetho.initializeWithDefaults(this);
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
         Timber.plant(new FileLoggingTree(getApplicationContext()));
 
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "xebia_henri_potier-db");
+        Database db = helper.getWritableDb();
+        mDaoSession = new DaoMaster(db).newSession();
         mRetrofit = setRetrofit();
+    }
 
+    public DaoSession getDaoSession() {
+        return mDaoSession;
+    }
+
+    public Retrofit getRetrofit() {
+        return mRetrofit;
     }
 
     private Retrofit setRetrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override public void log(String message) {
+            @Override
+            public void log(String message) {
                 Timber.tag("OkHttp").d(message);
             }
-        });
+        }).setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         } else {
             logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
@@ -54,21 +79,22 @@ public class HenriPotierApplication extends Application{
                 .readTimeout(10, TimeUnit.SECONDS)
                 .build();
 
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Book.class, new BookAdapter());
+        Gson gson = builder.create();
+
         return new Retrofit.Builder()
-                .baseUrl("http://http://henri-potier.xebia.fr/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("http://henri-potier.xebia.fr/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
                 .build();
     }
 
-    public Retrofit getRetrofit() {
-        return mRetrofit;
-    }
 
     public boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        NetworkInfo netInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
