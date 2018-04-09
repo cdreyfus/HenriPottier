@@ -6,6 +6,13 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import cdreyfus.xebia_henri_potier.models.Basket;
+import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.models.CommercialOffer;
+import cdreyfus.xebia_henri_potier.models.Minus;
+import cdreyfus.xebia_henri_potier.models.Percentage;
+import cdreyfus.xebia_henri_potier.models.Slice;
+
 public class BasketTest {
 
     private Basket basket;
@@ -114,6 +121,20 @@ public class BasketTest {
         basket.addBookToBasket(book1);
         basket.addBookToBasket(book2);
         Assert.assertEquals(32.5, basket.applyBestCommercialOffer(commercialOffers, basket.getRegularPrice()), 0);
+    }
+
+    @Test
+    public void getBooksPromotionCode(){
+        Book book1 = new Book();
+        book1.setIsbn("book1");
+        Book book2 = new Book();
+        book2.setIsbn("book2");
+
+        basket.addBookToBasket(book1);
+        basket.addBookToBasket(book2);
+        basket.editQuantityBook(book1, 2);
+
+        Assert.assertEquals("book1,book1,book2", basket.getPromotionCode());
     }
 
 }

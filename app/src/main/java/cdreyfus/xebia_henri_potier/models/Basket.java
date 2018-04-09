@@ -8,7 +8,6 @@ public class Basket {
 
     private static Basket mInstance;
     private Map<Book, Integer> booksQuantitiesMap;
-    private float totalPrice;
 
     public static Basket getInstance() {
         if (mInstance == null) {
@@ -18,7 +17,6 @@ public class Basket {
     }
 
     Basket() {
-        totalPrice = 0;
         booksQuantitiesMap = new LinkedHashMap<>();
     }
 
@@ -44,25 +42,31 @@ public class Basket {
 
     public void editQuantityBook(Book book, int quantity) {
         for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()) {
-            if (entry.getKey().getIsbn().equals(book.getIsbn())) {
+            if (entry.getKey().equals(book)) {
                 entry.setValue(quantity);
             }
         }
     }
 
-    public float applyBestCommercialOffer(ArrayList<CommercialOffer> commercialOfferArrayList, float regularPrice){
+    public float applyBestCommercialOffer(Offers offers, float regularPrice){
         float minimumValue = regularPrice;
 
-        for(CommercialOffer commercialOffer : commercialOfferArrayList){
+        for (CommercialOffer commercialOffer: offers.getListCommercialOffers()){
             float promo = commercialOffer.applyOffer(regularPrice);
             minimumValue = Math.min(minimumValue, promo);
         }
         return minimumValue;
     }
 
-    public float calculateTotalPrice() {
-        //TODO request commercial offers
-        ArrayList<CommercialOffer> commercialOffers = new ArrayList<>();
-        return applyBestCommercialOffer(commercialOffers, getRegularPrice());
+    public String getPromotionCode(){
+        StringBuilder promotionCode = new StringBuilder();
+        for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()){
+            for(int i=0; i<entry.getValue(); i++){
+                promotionCode.append(String.format("%s,", entry.getKey().getIsbn()));
+            }
+        }
+        promotionCode = promotionCode.deleteCharAt(promotionCode.length()-1);
+
+        return promotionCode.toString();
     }
 }

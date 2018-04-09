@@ -65,19 +65,15 @@ public class Book {
         return synopsis;
     }
 
-    public String getImageUrl() {
-        return cover;
-    }
-
-    public void setCover(String cover) {
-        this.cover = cover;
-    }
-
     public void setSynopsis(String synopsis) {
         this.synopsis = synopsis;
     }
 
     public String getCover() {
-        return this.cover;
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 }

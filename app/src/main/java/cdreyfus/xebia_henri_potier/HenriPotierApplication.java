@@ -10,7 +10,6 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.greenrobot.greendao.AbstractDaoMaster;
 import org.greenrobot.greendao.database.Database;
 
 import java.util.Objects;
@@ -18,9 +17,11 @@ import java.util.concurrent.TimeUnit;
 
 import cdreyfus.xebia_henri_potier.logs.FileLoggingTree;
 import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.models.CommercialOffer;
 import cdreyfus.xebia_henri_potier.models.DaoMaster;
 import cdreyfus.xebia_henri_potier.models.DaoSession;
 import cdreyfus.xebia_henri_potier.models.adapters.BookAdapter;
+import cdreyfus.xebia_henri_potier.models.adapters.CommercialOfferDeserializer;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -81,6 +82,7 @@ public class HenriPotierApplication extends Application{
 
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Book.class, new BookAdapter());
+        builder.registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer());
         Gson gson = builder.create();
 
         return new Retrofit.Builder()

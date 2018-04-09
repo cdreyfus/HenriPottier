@@ -3,7 +3,7 @@
     <string name="image_book_thumbnail">image_book_thumbnail</string>
     <string name="refresh_catalogue">Nothing in catalogue. Please refresh</string>
     <string name="book_cover">book_cover</string>
-    <string name="add_to_card">Add_to_card</string>
-    <string name="go_to_cart">Go to cart</string>
+    <string name="add_to_basket">Add to basket</string>
+    <string name="go_to_basket">Go to cart</string>
     <string name="catalogue">Catalogue</string>
 </resources>

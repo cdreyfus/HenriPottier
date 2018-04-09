@@ -39,7 +39,7 @@ public class CatalogueItemView extends LinearLayout{
     }
 
     public void setUpItem(Book book){
-        Picasso.get().load(book.getImageUrl()).into(imageView);
+        Picasso.get().load(book.getCover()).into(imageView);
         itemLabel.setText(book.getTitle());
         itemPrice.setText(String.format("%s€", book.getPrice()));
         mBook = book;

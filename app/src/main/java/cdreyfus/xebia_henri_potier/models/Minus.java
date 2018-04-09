@@ -3,7 +3,8 @@ package cdreyfus.xebia_henri_potier.models;
 public class Minus extends CommercialOffer{
     private int value;
 
-    Minus(int value) {
+    public Minus(int value) {
+        this.type = "minus";
         this.value = value;
     }
 

@@ -44,15 +44,25 @@
             tools:text="35€" />
 
         <Button
-            android:id="@+id/activity_book_card"
+            android:id="@+id/activity_book_add_to_basket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_to_card"
+            android:text="@string/add_to_basket"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@id/activity_book_price"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.233" />
+            app:layout_constraintVertical_bias="0.15" />
+
+        <NumberPicker
+            android:id="@+id/activity_book_number_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/activity_book_price"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.05"/>
 
         <TextView
             android:id="@+id/activity_book_synopsis"

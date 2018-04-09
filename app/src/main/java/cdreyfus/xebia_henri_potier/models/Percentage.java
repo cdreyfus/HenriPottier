@@ -3,7 +3,8 @@ package cdreyfus.xebia_henri_potier.models;
 public class Percentage extends CommercialOffer{
     private  int percentage;
 
-    Percentage(int percentage) {
+    public Percentage(int percentage) {
+        this.type = "percentage";
         this.percentage = percentage;
     }
 

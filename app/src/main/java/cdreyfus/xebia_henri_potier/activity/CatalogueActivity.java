@@ -41,10 +41,11 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
 
     private CatalogueItemAdapter catalogueItemAdapter;
     private BookDao bookDao;
+    private List<Book> bookList;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalogue);
         ButterKnife.bind(this);
@@ -52,7 +53,7 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
 
         bookDao = ((HenriPotierApplication) getApplication()).getDaoSession().getBookDao();
         bookDao.loadAll();
-        List<Book> bookList = bookDao.queryBuilder().list();
+        bookList = bookDao.queryBuilder().list();
         catalogueItemAdapter = new CatalogueItemAdapter(CatalogueActivity.this, bookList);
         listView.setAdapter(catalogueItemAdapter);
 
@@ -73,11 +74,14 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
             call.enqueue(new Callback<List<Book>>() {
                 @Override
                 public void onResponse(@NonNull Call<List<Book>> call, @NonNull Response<List<Book>> response) {
-                    bookDao.insertOrReplaceInTx(response.body());
+                    if(response.isSuccessful()){
+                        bookDao.insertOrReplaceInTx(response.body());
 
-                    mFrameLayout.setVisibility(View.VISIBLE);
-                    progressBarRefreshList.setVisibility(View.GONE);
-                    refreshLayout.setRefreshing(false);
+                        mFrameLayout.setVisibility(View.VISIBLE);
+                        progressBarRefreshList.setVisibility(View.GONE);
+                        refreshLayout.setRefreshing(false);
+                    }
+
 
                     catalogueItemAdapter.notifyDataSetChanged();
                     mEmptyDb.setVisibility(catalogueItemAdapter.getCount() == 0 ? View.VISIBLE : View.GONE);
