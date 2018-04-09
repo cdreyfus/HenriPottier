@@ -4,8 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,8 +13,7 @@ import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
 import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
 import cdreyfus.xebia_henri_potier.models.Basket;
-import cdreyfus.xebia_henri_potier.models.CommercialOffer;
-import cdreyfus.xebia_henri_potier.models.Offers;
+import cdreyfus.xebia_henri_potier.models.CommercialOffersArray;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,28 +34,30 @@ public class BasketActivity extends HenriPotierActivity {
         ButterKnife.bind(this);
         mBasket = Basket.getInstance();
 
-        getCommercialOffersForBasket();
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.basket);
 
+        if(!mBasket.getBooksQuantitiesMap().isEmpty()) {
+            getCommercialOffersForBasket();
+        }
     }
 
     private void getCommercialOffersForBasket() {
         if (((HenriPotierApplication) getApplication()).isOnline()) {
 
-
             Retrofit retrofit = ((HenriPotierApplication) getApplication()).getRetrofit();
             BookInterface bookInterface = retrofit.create(BookInterface.class);
-            Call<List<CommercialOffer>> call = bookInterface.getCommercialOffer(mBasket.getPromotionCode());
-            call.enqueue(new Callback<List<CommercialOffer>>() {
+            Call<CommercialOffersArray> call = bookInterface.getCommercialOffer(mBasket.getPromotionCode());
+            call.enqueue(new Callback<CommercialOffersArray>() {
                 @Override
-                public void onResponse(@NonNull Call<List<CommercialOffer>> call, @NonNull Response<List<CommercialOffer>> response) {
+                public void onResponse(@NonNull Call<CommercialOffersArray> call, @NonNull Response<CommercialOffersArray> response) {
                     if (response.isSuccessful()) {
-                        List<CommercialOffer> commercialOfferList = response.body();
-//                        mTextFinalPrice.setText(String.format("%s €", mBasket.applyBestCommercialOffer(commercialOfferList, mBasket.getRegularPrice())));
+                        float price = mBasket.applyBestCommercialOffer(response.body(), mBasket.getRegularPrice());
+                        mTextFinalPrice.setText(String.format("%s €", price));
                     }
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<List<CommercialOffer>> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<CommercialOffersArray> call, @NonNull Throwable t) {
                     Timber.d(t);
                 }
             });

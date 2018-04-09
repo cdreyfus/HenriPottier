@@ -9,6 +9,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.idescout.sql.SqlScoutServer;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,6 +51,8 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalogue);
         ButterKnife.bind(this);
+        SqlScoutServer.create(this, getPackageName());
+
         getSupportActionBar().setTitle(R.string.catalogue);
 
         bookDao = ((HenriPotierApplication) getApplication()).getDaoSession().getBookDao();

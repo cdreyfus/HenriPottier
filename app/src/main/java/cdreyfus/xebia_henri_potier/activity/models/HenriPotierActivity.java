@@ -16,13 +16,6 @@ import cdreyfus.xebia_henri_potier.activity.BasketActivity;
 @SuppressLint("Registered")
 public class HenriPotierActivity extends AppCompatActivity {
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        SqlScoutServer.create(this, getPackageName());
-
-    }
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_basket, menu);
         return true;

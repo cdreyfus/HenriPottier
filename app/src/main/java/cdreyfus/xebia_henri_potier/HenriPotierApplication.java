@@ -20,8 +20,8 @@ import cdreyfus.xebia_henri_potier.models.Book;
 import cdreyfus.xebia_henri_potier.models.CommercialOffer;
 import cdreyfus.xebia_henri_potier.models.DaoMaster;
 import cdreyfus.xebia_henri_potier.models.DaoSession;
-import cdreyfus.xebia_henri_potier.models.adapters.BookAdapter;
-import cdreyfus.xebia_henri_potier.models.adapters.CommercialOfferDeserializer;
+import cdreyfus.xebia_henri_potier.models.deserializer.BookDeserializer;
+import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -80,15 +80,14 @@ public class HenriPotierApplication extends Application{
                 .readTimeout(10, TimeUnit.SECONDS)
                 .build();
 
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Book.class, new BookAdapter());
-        builder.registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer());
-        Gson gson = builder.create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Book.class, new BookDeserializer())
+                .registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer())
+                .create();
 
         return new Retrofit.Builder()
                 .baseUrl("http://henri-potier.xebia.fr/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
                 .build();
     }

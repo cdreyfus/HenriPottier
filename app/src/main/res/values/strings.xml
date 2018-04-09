@@ -6,4 +6,7 @@
     <string name="add_to_basket">Add to basket</string>
     <string name="go_to_basket">Go to cart</string>
     <string name="catalogue">Catalogue</string>
+    <string name="basket">Basket</string>
+    <string name="remove_from_basket">Remove from basket</string>
+    <string name="edit_quantity">Edit quantity</string>
 </resources>

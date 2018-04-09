@@ -33,7 +33,7 @@ Par exemple pour deux livres (à 35€ et à 30€), la requête ressemblera à 
 Et le service vous renverra alors les offres applicables à ce panier sous le format :
 
 1. {
-2. ​"offers"​:​ ​[
+2. ​"commercialOffersArray"​:​ ​[
 3. ​{​"type"​:​ ​"percentage"​,​ ​"value"​:​ ​ 5 ​}​,
 4. ​{​"type"​:​ ​"minus"​,​ ​"value"​:​ ​ 15 ​}​,
 5. ​{​"type"​:​ ​"slice"​,​ ​"sliceValue"​:​ ​ 100 ​,​ ​"value"​:​ ​ 12 ​}

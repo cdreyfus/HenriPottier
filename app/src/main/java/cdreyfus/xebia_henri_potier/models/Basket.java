@@ -1,6 +1,5 @@
 package cdreyfus.xebia_henri_potier.models;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,12 +47,11 @@ public class Basket {
         }
     }
 
-    public float applyBestCommercialOffer(Offers offers, float regularPrice){
+    public float applyBestCommercialOffer(CommercialOffersArray commercialOffersArray, float regularPrice){
         float minimumValue = regularPrice;
 
-        for (CommercialOffer commercialOffer: offers.getListCommercialOffers()){
-            float promo = commercialOffer.applyOffer(regularPrice);
-            minimumValue = Math.min(minimumValue, promo);
+        for (CommercialOffer commercialOffer: commercialOffersArray.getCommercialOffers()){
+            minimumValue = Math.min(minimumValue, commercialOffer.applyOffer(regularPrice));
         }
         return minimumValue;
     }
@@ -69,4 +67,5 @@ public class Basket {
 
         return promotionCode.toString();
     }
+
 }
