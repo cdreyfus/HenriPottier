@@ -1,18 +1,9 @@
 package cdreyfus.xebia_henri_potier.models;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
-
-import java.lang.reflect.Type;
-import org.greenrobot.greendao.annotation.Generated;
 
 @Entity(nameInDb = "books")
 public class Book {

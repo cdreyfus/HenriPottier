@@ -3,8 +3,25 @@ package cdreyfus.xebia_henri_potier.models;
 public class Percentage extends CommercialOffer{
     private  int percentage;
 
-    @Override
-    public void applyCommercialOffer() {
+    Percentage(int percentage) {
+        this.percentage = percentage;
+    }
 
+    public float applyPercentage(float basketValue){
+        return basketValue * (1 - (float) percentage/100);
+
+    }
+
+    public int getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(int percentage) {
+        this.percentage = percentage;
+    }
+
+    @Override
+    public float applyOffer(float basketValue) {
+        return applyPercentage(basketValue);
     }
 }

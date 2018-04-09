@@ -14,7 +14,7 @@ public class CartActivity extends HenriPotierActivity {
     @BindView(R.id.activity_cart_final_price)TextView mTextFinalPrice;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         ButterKnife.bind(this);

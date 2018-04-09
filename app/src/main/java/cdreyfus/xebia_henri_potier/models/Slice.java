@@ -1,11 +1,36 @@
 package cdreyfus.xebia_henri_potier.models;
 
 public class Slice extends CommercialOffer{
-    private int sliceValue;
     private int value;
+    private int sliceValue;
+
+    Slice(int value, int sliceValue) {
+        this.value = value;
+        this.sliceValue = sliceValue;
+    }
+
+    public int getSliceValue() {
+        return sliceValue;
+    }
+
+    public void setSliceValue(int sliceValue) {
+        this.sliceValue = sliceValue;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public float applySlice(float basketValue){
+        return basketValue - ((int) basketValue / sliceValue) * value;
+    }
 
     @Override
-    public void applyCommercialOffer() {
-
+    public float applyOffer(float basketValue) {
+        return applySlice(basketValue);
     }
 }
