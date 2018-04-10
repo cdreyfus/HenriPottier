@@ -1,12 +1,16 @@
 package cdreyfus.xebia_henri_potier.activity;
 
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import com.cuiweiyou.numberpickerdialog.NumberPickerDialog;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
@@ -17,7 +21,6 @@ import butterknife.OnClick;
 import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
-import cdreyfus.xebia_henri_potier.dialog.NumberPickerDialog;
 import cdreyfus.xebia_henri_potier.models.Basket;
 import cdreyfus.xebia_henri_potier.models.Book;
 import cdreyfus.xebia_henri_potier.models.BookDao;
@@ -32,7 +35,6 @@ public class BookActivity extends HenriPotierActivity {
     TextView bookPrice;
     @BindView(R.id.activity_book_synopsis)
     TextView bookSynopsis;
-
     @BindView(R.id.activity_book_add_to_basket)
     Button buttonAddBookToBasket;
     @BindView(R.id.activity_book_edit_quantity_button)
@@ -59,24 +61,39 @@ public class BookActivity extends HenriPotierActivity {
             mBook = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(getIntent().getStringExtra(EXTRA_BOOK_ID))).build().unique();
             setUpView(mBook);
         }
+
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_basket, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_basket:
+                Intent goToBasket = new Intent(BookActivity.this, BasketActivity.class);
+                startActivity(goToBasket);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void initNumberPickerDialog() {
-        mNumberPickerDialog = new NumberPickerDialog(BookActivity.this, mBasket.getBooksQuantitiesMap().get(mBook));
-        mNumberPickerDialog.setTitle(mBook.getTitle());
-        mNumberPickerDialog.setButton1(new View.OnClickListener() {
+        NumberPicker.OnValueChangeListener onValueChangeListener = new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onClick(View v) {
-                mNumberPickerDialog.dismiss();
-                mBasket.editQuantityBook(mBook, mNumberPickerDialog.getValue());
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                mBasket.editQuantityBook(mBook, newVal);
             }
-        });
-        mNumberPickerDialog.setButton2(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mNumberPickerDialog.dismiss();
-            }
-        });
+        };
+
+        mNumberPickerDialog = new NumberPickerDialog(BookActivity.this,
+                mBook.getTitle(),
+                onValueChangeListener,
+                10,
+                1,
+                mBasket.getBooksQuantitiesMap().get(mBook));
     }
 
     private void setUpView(Book book) {
@@ -97,6 +114,7 @@ public class BookActivity extends HenriPotierActivity {
     @OnClick(R.id.activity_book_add_to_basket)
     public void clickAddToBasket() {
         mBasket.addBookToBasket(mBook);
+        initNumberPickerDialog();
         setButtonView();
     }
 
@@ -108,11 +126,7 @@ public class BookActivity extends HenriPotierActivity {
 
     @OnClick(R.id.activity_book_edit_quantity_button)
     public void editQuantity() {
-//        initNumberPickerDialog();
-//        mNumberPickerDialog.show();
-        AlertDialog.Builder builder = new AlertDialog.Builder(BookActivity.this)
-                .setTitle(mBook.getTitle());
-        builder.create().show();
+        mNumberPickerDialog.show();
     }
 
 

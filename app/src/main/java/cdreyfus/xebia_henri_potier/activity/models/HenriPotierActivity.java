@@ -47,21 +47,6 @@ public class HenriPotierActivity extends AppCompatActivity {
 
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_basket, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_basket:
-                Intent goToBasket = new Intent(HenriPotierActivity.this, BasketActivity.class);
-                startActivity(goToBasket);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private Retrofit setRetrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override

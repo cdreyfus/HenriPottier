@@ -1,10 +1,13 @@
 package cdreyfus.xebia_henri_potier.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -83,7 +86,6 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
             @Override
             public void onFailure(Call<List<Book>> call, Throwable t) {
                 Timber.d(t);
-
             }
         });
     }
@@ -101,4 +103,20 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
             }
         }, 1500);
     }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_basket, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_basket:
+                Intent goToBasket = new Intent(CatalogueActivity.this, BasketActivity.class);
+                startActivity(goToBasket);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

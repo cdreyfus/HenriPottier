@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$USER_HOME$/ownCloud/Projets/Xebia_Henri_Potier/GitProjects/Xebia_Henri_Potier/NumberPickerDialog/NumberPickerDialog.iml" filepath="$USER_HOME$/ownCloud/Projets/Xebia_Henri_Potier/GitProjects/Xebia_Henri_Potier/NumberPickerDialog/NumberPickerDialog.iml" />
       <module fileurl="file://$USER_HOME$/ownCloud/Projets/Xebia_Henri_Potier/GitProjects/Xebia_Henri_Potier/Xebia_Henri_Potier.iml" filepath="$USER_HOME$/ownCloud/Projets/Xebia_Henri_Potier/GitProjects/Xebia_Henri_Potier/Xebia_Henri_Potier.iml" />
       <module fileurl="file://$USER_HOME$/ownCloud/Projets/Xebia_Henri_Potier/GitProjects/Xebia_Henri_Potier/app/app.iml" filepath="$USER_HOME$/ownCloud/Projets/Xebia_Henri_Potier/GitProjects/Xebia_Henri_Potier/app/app.iml" />
     </modules>
