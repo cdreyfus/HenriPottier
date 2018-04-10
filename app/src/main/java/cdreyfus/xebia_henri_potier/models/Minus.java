@@ -12,6 +12,11 @@ public class Minus extends CommercialOffer{
         return basketValue - value;
     }
 
+    public int getValue() {
+        return value;
+    }
+
+
     @Override
     public float applyOffer(float basketValue) {
         return applyMinus(basketValue);

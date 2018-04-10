@@ -16,7 +16,6 @@ public class BookDeserializer implements JsonDeserializer<Book> {
     public Book deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         Book book = new Book();
-
         book.setIsbn(jsonObject.get("isbn").getAsString());
         book.setTitle(jsonObject.get("title").getAsString());
         book.setPrice(jsonObject.get("price").getAsInt());
@@ -25,9 +24,10 @@ public class BookDeserializer implements JsonDeserializer<Book> {
         JsonArray synopsisJsonArray = jsonObject.getAsJsonArray("synopsis");
         StringBuilder synopsis = new StringBuilder();
         for(JsonElement jsonElement : synopsisJsonArray){
-            synopsis.append(jsonElement.getAsString());
+            synopsis.append(jsonElement.getAsString()).append("\n");
         }
-        book.setSynopsis(synopsis.toString());
+
+        book.setSynopsis(synopsis.substring(0, synopsis.lastIndexOf("\n")));
 
         return book;
     }

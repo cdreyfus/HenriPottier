@@ -4,7 +4,7 @@ public class Slice extends CommercialOffer{
     private int value;
     private int sliceValue;
 
-    Slice(int value, int sliceValue) {
+    public Slice(int value, int sliceValue) {
         this.type="slice";
         this.value = value;
         this.sliceValue = sliceValue;

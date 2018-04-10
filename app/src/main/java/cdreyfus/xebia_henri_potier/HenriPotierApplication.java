@@ -32,7 +32,6 @@ import timber.log.Timber;
 public class HenriPotierApplication extends Application{
 
     private DaoSession mDaoSession;
-    private Retrofit mRetrofit;
 
     @Override
     public void onCreate() {
@@ -47,55 +46,10 @@ public class HenriPotierApplication extends Application{
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "xebia_henri_potier-db");
         Database db = helper.getWritableDb();
         mDaoSession = new DaoMaster(db).newSession();
-        mRetrofit = setRetrofit();
     }
 
     public DaoSession getDaoSession() {
         return mDaoSession;
     }
 
-    public Retrofit getRetrofit() {
-        return mRetrofit;
-    }
-
-    private Retrofit setRetrofit() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-                Timber.tag("OkHttp").d(message);
-            }
-        }).setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        if (BuildConfig.DEBUG) {
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        } else {
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-        }
-
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(logging)
-                .addNetworkInterceptor(new StethoInterceptor())
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .build();
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Book.class, new BookDeserializer())
-                .registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer())
-                .create();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://henri-potier.xebia.fr/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(okHttpClient)
-                .build();
-    }
-
-
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
 }

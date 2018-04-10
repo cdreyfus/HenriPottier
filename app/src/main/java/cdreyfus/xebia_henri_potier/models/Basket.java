@@ -47,10 +47,9 @@ public class Basket {
         }
     }
 
-    public float applyBestCommercialOffer(CommercialOffersArray commercialOffersArray, float regularPrice){
+    public float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice){
         float minimumValue = regularPrice;
-
-        for (CommercialOffer commercialOffer: commercialOffersArray.getCommercialOffers()){
+        for (CommercialOffer commercialOffer: commercialOffersResponse.getCommercialOffers()){
             minimumValue = Math.min(minimumValue, commercialOffer.applyOffer(regularPrice));
         }
         return minimumValue;
@@ -68,4 +67,8 @@ public class Basket {
         return promotionCode.toString();
     }
 
+    public float getPromotionValue(CommercialOffersResponse commercialOffersResponse) {
+        float regularPrice = getRegularPrice();
+        return regularPrice - applyBestCommercialOffer(commercialOffersResponse, regularPrice);
+    }
 }

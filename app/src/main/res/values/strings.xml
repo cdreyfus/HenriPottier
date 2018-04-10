@@ -9,4 +9,6 @@
     <string name="basket">Basket</string>
     <string name="remove_from_basket">Remove from basket</string>
     <string name="edit_quantity">Edit quantity</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 </resources>

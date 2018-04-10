@@ -1,37 +1,34 @@
 package cdreyfus.xebia_henri_potier.activity;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.idescout.sql.SqlScoutServer;
-
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
-import cdreyfus.xebia_henri_potier.adapter.CatalogueItemAdapter;
+import cdreyfus.xebia_henri_potier.adapter.CatalogueAdapter;
 import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
 import cdreyfus.xebia_henri_potier.models.Book;
-import cdreyfus.xebia_henri_potier.models.BookDao;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import timber.log.Timber;
 
 public class CatalogueActivity extends HenriPotierActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    @BindView(R.id.activity_catalogue_list_view)
-    ListView listView;
+    @BindView(R.id.activity_catalogue_list)
+    RecyclerView recyclerView;
     @BindView(R.id.activity_catalogue_empty_db)
     TextView mEmptyDb;
     @BindView(R.id.activity_catalogue_frame_data)
@@ -41,70 +38,54 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
     @BindView(R.id.activity_catalogue_progress_bar)
     ProgressBar progressBarRefreshList;
 
-    private CatalogueItemAdapter catalogueItemAdapter;
-    private BookDao bookDao;
-    private List<Book> bookList;
-
+    private CatalogueAdapter catalogueAdapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalogue);
         ButterKnife.bind(this);
-        SqlScoutServer.create(this, getPackageName());
-
-        getSupportActionBar().setTitle(R.string.catalogue);
-
-        bookDao = ((HenriPotierApplication) getApplication()).getDaoSession().getBookDao();
-        bookDao.loadAll();
-        bookList = bookDao.queryBuilder().list();
-        catalogueItemAdapter = new CatalogueItemAdapter(CatalogueActivity.this, bookList);
-        listView.setAdapter(catalogueItemAdapter);
-
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.catalogue);
         refreshLayout.setOnRefreshListener(this);
+        setView();
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        bookDao.loadAll();
+        catalogueAdapter = new CatalogueAdapter(this);
+        recyclerView.setAdapter(catalogueAdapter);
+
         getCatalogue();
     }
 
-    private void getCatalogue() {
+    public void setView(){
+        boolean isDbEmpty = bookDao.queryBuilder().list().isEmpty();
+        mFrameLayout.setVisibility(isDbEmpty ? View.GONE : View.VISIBLE);
+        mEmptyDb.setVisibility(isDbEmpty ? View.VISIBLE:View.GONE);
 
-        if (((HenriPotierApplication) getApplication()).isOnline()) {
+        progressBarRefreshList.setVisibility(View.GONE);
+        refreshLayout.setRefreshing(false);
+    }
 
-            mFrameLayout.setVisibility(View.GONE);
-            progressBarRefreshList.setVisibility(View.VISIBLE);
+    public void getCatalogue() {
 
-            Retrofit retrofit = ((HenriPotierApplication) getApplication()).getRetrofit();
-            BookInterface bookInterface = retrofit.create(BookInterface.class);
-            Call<List<Book>> call = bookInterface.getBooks();
-            call.enqueue(new Callback<List<Book>>() {
-                @Override
-                public void onResponse(@NonNull Call<List<Book>> call, @NonNull Response<List<Book>> response) {
-                    if(response.isSuccessful()){
-                        bookDao.insertOrReplaceInTx(response.body());
-
-                        mFrameLayout.setVisibility(View.VISIBLE);
-                        progressBarRefreshList.setVisibility(View.GONE);
-                        refreshLayout.setRefreshing(false);
-                    }
-
-
-                    catalogueItemAdapter.notifyDataSetChanged();
-                    mEmptyDb.setVisibility(catalogueItemAdapter.getCount() == 0 ? View.VISIBLE : View.GONE);
-                    listView.setVisibility(catalogueItemAdapter.getCount() == 0 ? View.GONE : View.VISIBLE);
+        BookInterface bookInterface = mRetrofit.create(BookInterface.class);
+        Call<List<Book>> call = bookInterface.getBooks();
+        call.enqueue(new Callback<List<Book>>() {
+            @Override
+            public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
+                if (response.isSuccessful()) {
+                    bookDao.insertOrReplaceInTx(response.body());
+                    catalogueAdapter.updateApdater();
+                    setView();
                 }
+            }
 
-                @Override
-                public void onFailure(@NonNull Call<List<Book>> call, @NonNull Throwable t) {
-                    Timber.d(t);
-                }
-            });
-        } else {
-            mFrameLayout.setVisibility(View.VISIBLE);
-            progressBarRefreshList.setVisibility(View.GONE);
+            @Override
+            public void onFailure(Call<List<Book>> call, Throwable t) {
+                Timber.d(t);
 
-            catalogueItemAdapter.notifyDataSetChanged();
-            mEmptyDb.setVisibility(catalogueItemAdapter.getCount() == 0 ? View.VISIBLE : View.GONE);
-            listView.setVisibility(catalogueItemAdapter.getCount() == 0 ? View.GONE : View.VISIBLE);
-        }
+            }
+        });
     }
 
     @Override
@@ -112,19 +93,12 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
         Timber.i("refreshing....");
         mFrameLayout.setVisibility(View.GONE);
         progressBarRefreshList.setVisibility(View.VISIBLE);
+
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 getCatalogue();
             }
-        }, 2000);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        catalogueItemAdapter.notifyDataSetChanged();
-        mEmptyDb.setVisibility(catalogueItemAdapter.getCount() == 0 ? View.VISIBLE : View.GONE);
-        listView.setVisibility(catalogueItemAdapter.getCount() == 0 ? View.GONE : View.VISIBLE);
+        }, 1500);
     }
 }

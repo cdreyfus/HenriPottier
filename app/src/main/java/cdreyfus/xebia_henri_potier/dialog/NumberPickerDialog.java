@@ -1,53 +1,71 @@
 package cdreyfus.xebia_henri_potier.dialog;
 
 
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.content.Context;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
+import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
-public class NumberPickerDialog extends DialogFragment {
-    private NumberPicker.OnValueChangeListener valueChangeListener;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import cdreyfus.xebia_henri_potier.R;
+
+
+public class NumberPickerDialog extends AlertDialog {
+
+    @BindView(R.id.number_picker_title)
+    TextView mTitle;
+    @BindView(R.id.numberPicker)
+    NumberPicker mNumberPicker;
+    @BindView(R.id.number_picker_cancel)
+    Button bCancel;
+    @BindView(R.id.number_picker_ok)
+    Button bOk;
+
+    public NumberPickerDialog(Context context, int currentValue) {
+        super(context);
+        ButterKnife.bind(this, View.inflate(getContext(), R.layout.dialog_number_picker, null));
+        mNumberPicker.setMinValue(1);
+        mNumberPicker.setMaxValue(10);
+        mNumberPicker.setValue(currentValue);
+    }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-        final NumberPicker numberPicker = new NumberPicker(getActivity());
-
-        numberPicker.setMinValue(20);
-        numberPicker.setMaxValue(60);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Choose Value");
-        builder.setMessage("Choose a number :");
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                valueChangeListener.onValueChange(numberPicker,
-                        numberPicker.getValue(), numberPicker.getValue());
-            }
-        });
-
-        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                valueChangeListener.onValueChange(numberPicker,
-                        numberPicker.getValue(), numberPicker.getValue());
-            }
-        });
-
-        builder.setView(numberPicker);
-        return builder.create();
+    public void setTitle(CharSequence title) {
+        mTitle.setText(title);
     }
 
-    public NumberPicker.OnValueChangeListener getValueChangeListener() {
-        return valueChangeListener;
+    public int getValue() {
+        return mNumberPicker.getValue();
     }
 
-    public void setValueChangeListener(NumberPicker.OnValueChangeListener valueChangeListener) {
-        this.valueChangeListener = valueChangeListener;
+    public void setValue(int value) {
+        mNumberPicker.setValue(value);
+    }
+
+    public void setButton1(final android.view.View.OnClickListener onClickListener) {
+        bOk.setText(R.string.ok);
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(v);
+
+            }
+        };
+        bOk.setOnClickListener(clickListener);
+    }
+
+
+    public void setButton2(final android.view.View.OnClickListener onClickListener) {
+        bCancel.setText(R.string.cancel);
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(v);
+            }
+        };
+        bCancel.setOnClickListener(clickListener);
     }
 }

@@ -22,13 +22,28 @@ public class CommercialOfferDeserializer implements JsonDeserializer<CommercialO
         if (type != null) {
             switch (type.getAsString()) {
                 case "slice":
-                    return context.deserialize(jsonObject, Slice.class);
+                    return deserializeSlice(jsonObject);
                 case "percentage":
-                    return context.deserialize(jsonObject, Percentage.class);
+                    return deserializePercentage(jsonObject);
                 case "minus":
-                    return context.deserialize(jsonObject, Minus.class);
+                    return deserializeMinus(jsonObject);
             }
         }
         return null;
+    }
+
+    public Percentage deserializePercentage(JsonElement json) {
+        JsonObject jsonObject = json.getAsJsonObject();
+        return new Percentage(jsonObject.get("value").getAsInt());
+    }
+
+    public Minus deserializeMinus(JsonElement json) {
+        JsonObject jsonObject = json.getAsJsonObject();
+        return new Minus(jsonObject.get("value").getAsInt());
+    }
+
+    public Slice deserializeSlice(JsonElement json) {
+        JsonObject jsonObject = json.getAsJsonObject();
+        return new Slice(jsonObject.get("value").getAsInt(), jsonObject.get("sliceValue").getAsInt());
     }
 }

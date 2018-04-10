@@ -62,29 +62,27 @@ public class BasketTest {
 
     @Test
     public void applyBestCommercialOffer1() {
-        CommercialOffersArray commercialOffersArray = new CommercialOffersArray();
-        commercialOffersArray.addOffer(new Slice(12, 100));
-        commercialOffersArray.addOffer(new Minus(15));
-        commercialOffersArray.addOffer(new Percentage(5));
+        CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
+        commercialOffersResponse.addOffer(new Slice(12, 100));
+        commercialOffersResponse.addOffer(new Minus(15));
+        commercialOffersResponse.addOffer(new Percentage(5));
 
         Book book1 = new Book();
         book1.setPrice(30);
         Book book2 = new Book();
-
         book2.setPrice(35);
 
         basket.addBookToBasket(book1);
         basket.addBookToBasket(book2);
-        Assert.assertEquals(50, basket.applyBestCommercialOffer(commercialOffersArray, basket.getRegularPrice()), 0);
-
+        Assert.assertEquals(50, basket.applyBestCommercialOffer(commercialOffersResponse, basket.getRegularPrice()), 0);
     }
 
     @Test
     public void applyBestCommercialOffer2() {
-        CommercialOffersArray commercialOffersArray = new CommercialOffersArray();
-        commercialOffersArray.addOffer(new Slice(12, 50));
-        commercialOffersArray.addOffer(new Minus(15));
-        commercialOffersArray.addOffer(new Percentage(5));
+        CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
+        commercialOffersResponse.addOffer(new Slice(12, 50));
+        commercialOffersResponse.addOffer(new Minus(10));
+        commercialOffersResponse.addOffer(new Percentage(5));
 
         Book book1 = new Book();
         book1.setPrice(30);
@@ -93,16 +91,16 @@ public class BasketTest {
 
         basket.addBookToBasket(book1);
         basket.addBookToBasket(book2);
-        Assert.assertEquals(53, basket.applyBestCommercialOffer(commercialOffersArray, basket.getRegularPrice()), 0);
+        Assert.assertEquals(53, basket.applyBestCommercialOffer(commercialOffersResponse, basket.getRegularPrice()), 0);
 
     }
 
     @Test
     public void applyBestCommercialOffer3() {
-        CommercialOffersArray commercialOffersArray = new CommercialOffersArray();
-        commercialOffersArray.addOffer(new Slice(12, 100));
-        commercialOffersArray.addOffer(new Minus(15));
-        commercialOffersArray.addOffer(new Percentage(50));
+        CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
+        commercialOffersResponse.addOffer(new Slice(12, 100));
+        commercialOffersResponse.addOffer(new Minus(15));
+        commercialOffersResponse.addOffer(new Percentage(50));
 
         Book book1 = new Book();
         book1.setPrice(30);
@@ -111,7 +109,7 @@ public class BasketTest {
 
         basket.addBookToBasket(book1);
         basket.addBookToBasket(book2);
-        Assert.assertEquals(32.5, basket.applyBestCommercialOffer(commercialOffersArray, basket.getRegularPrice()), 0);
+        Assert.assertEquals(32.5, basket.applyBestCommercialOffer(commercialOffersResponse, basket.getRegularPrice()), 0);
     }
 
     @Test
@@ -126,5 +124,21 @@ public class BasketTest {
         basket.editQuantityBook(book1, 2);
 
         Assert.assertEquals("book1,book1,book2", basket.getPromotionCode());
+    }
+
+    @Test
+    public void getPromotionValue(){
+        Book book1 = new Book();
+        book1.setPrice(30);
+
+        Book book2 = new Book();
+        book2.setPrice(35);
+
+        CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
+        commercialOffersResponse.addOffer(new Slice(12, 100));
+        commercialOffersResponse.addOffer(new Minus(15));
+        commercialOffersResponse.addOffer(new Percentage(5));
+
+        Assert.assertEquals(15, basket.getPromotionValue(commercialOffersResponse), 0);
     }
 }

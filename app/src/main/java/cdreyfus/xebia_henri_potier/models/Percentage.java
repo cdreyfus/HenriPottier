@@ -13,7 +13,7 @@ public class Percentage extends CommercialOffer{
 
     }
 
-    public int getPercentage() {
+    public int getValue() {
         return percentage;
     }
 
