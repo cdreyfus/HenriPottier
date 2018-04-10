@@ -2,14 +2,18 @@ package cdreyfus.xebia_henri_potier.activity.models;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
@@ -86,4 +90,24 @@ public class HenriPotierActivity extends AppCompatActivity {
         NetworkInfo netInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+    protected class NotConnectedAlertDialog extends AlertDialog{
+
+        public NotConnectedAlertDialog(@NonNull Context context) {
+            super(context);
+            setCancelable(false);
+
+            setTitle(getString(R.string.no_internet_connection));
+            setMessage(getString(R.string.message_not_connected));
+
+            setButton(BUTTON_POSITIVE, getString(R.string.ok), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dismiss();
+                    onBackPressed();
+                }
+            });
+        }
+    }
+
 }

@@ -124,4 +124,12 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener, 
 
         return this;
     }
+
+    public void setNeutralButton(String  neutralMessage, OnClickListener onClickListener){
+        setButton(BUTTON_NEUTRAL,  neutralMessage, onClickListener);
+    }
+
+    public void setNegativeButton(String  negativeMessage, OnClickListener onClickListener){
+        setButton(BUTTON_NEGATIVE, negativeMessage, onClickListener);
+    }
 }

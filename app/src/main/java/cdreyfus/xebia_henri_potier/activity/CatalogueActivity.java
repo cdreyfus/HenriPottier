@@ -60,34 +60,39 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
         getCatalogue();
     }
 
-    public void setView(){
+    public void setView() {
         boolean isDbEmpty = bookDao.queryBuilder().list().isEmpty();
         mFrameLayout.setVisibility(isDbEmpty ? View.GONE : View.VISIBLE);
-        mEmptyDb.setVisibility(isDbEmpty ? View.VISIBLE:View.GONE);
+        mEmptyDb.setVisibility(isDbEmpty ? View.VISIBLE : View.GONE);
 
         progressBarRefreshList.setVisibility(View.GONE);
         refreshLayout.setRefreshing(false);
     }
 
     public void getCatalogue() {
+        if (isOnline()) {
 
-        BookInterface bookInterface = mRetrofit.create(BookInterface.class);
-        Call<List<Book>> call = bookInterface.getBooks();
-        call.enqueue(new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
-                if (response.isSuccessful()) {
-                    bookDao.insertOrReplaceInTx(response.body());
-                    catalogueAdapter.updateApdater();
-                    setView();
+            BookInterface bookInterface = mRetrofit.create(BookInterface.class);
+            Call<List<Book>> call = bookInterface.getBooks();
+            call.enqueue(new Callback<List<Book>>() {
+                @Override
+                public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
+                    if (response.isSuccessful()) {
+                        bookDao.insertOrReplaceInTx(response.body());
+                        catalogueAdapter.updateApdater();
+                        setView();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<Book>> call, Throwable t) {
-                Timber.d(t);
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Book>> call, Throwable t) {
+                    Timber.d(t);
+                }
+            });
+        } else {
+            NotConnectedAlertDialog notConnectedAlertDialog = new NotConnectedAlertDialog(CatalogueActivity.this);
+            notConnectedAlertDialog.show();
+        }
     }
 
     @Override

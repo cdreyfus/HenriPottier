@@ -6,7 +6,7 @@ import java.util.Map;
 public class Basket {
 
     private static Basket mInstance;
-    private Map<Book, Integer> booksQuantitiesMap;
+    private LinkedHashMap<Book, Integer> booksQuantitiesMap;
 
     public static Basket getInstance() {
         if (mInstance == null) {
@@ -27,7 +27,7 @@ public class Basket {
         return regularPrice;
     }
 
-    public Map<Book, Integer> getBooksQuantitiesMap() {
+    public LinkedHashMap<Book, Integer> getBooksQuantitiesMap() {
         return booksQuantitiesMap;
     }
 

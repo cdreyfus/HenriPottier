@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/activity_basket_layout_prices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/activity_basket_regular_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Regular price: 65€" />
+
+
+        <TextView
+            android:id="@+id/activity_basket_promo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/activity_basket_regular_price"
+            tools:text="Promo: -15€" />
+
+
+        <TextView
+            android:id="@+id/activity_basket_final_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/activity_basket_promo"
+            tools:text="Final price: 50€" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/activity_basket_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@id/activity_basket_layout_prices" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_basket_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/activity_basket_divider" />
+
+    <TextView
+        android:id="@+id/activity_basket_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/basket_empty"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>
