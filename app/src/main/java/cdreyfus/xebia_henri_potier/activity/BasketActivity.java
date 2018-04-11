@@ -59,8 +59,8 @@ public class BasketActivity extends HenriPotierActivity {
             recyclerView.setVisibility(View.VISIBLE);
             mEmptyBasket.setVisibility(View.GONE);
         } else {
-            mPromo.setText("0.0 €");
-            mFinalPrice.setText("0.0 €");
+            mPromo.setText(R.string.default_promotion);
+            mFinalPrice.setText(R.string.default_total);
             recyclerView.setVisibility(View.GONE);
             mEmptyBasket.setVisibility(View.VISIBLE);
         }

@@ -15,4 +15,6 @@
     <string name="message_not_connected">Your device is currently not connected to any network. Please connect to the internet before moving forward</string>
     <string name="basket_empty">Basket is empty !</string>
     <string name="see_book">See book</string>
+    <string name="default_promotion">Promotion: 0.0 €</string>
+    <string name="default_total">New Total: %s €</string>
 </resources>

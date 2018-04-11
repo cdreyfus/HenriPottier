@@ -14,6 +14,7 @@
 
         <TextView
             android:id="@+id/activity_basket_regular_price"
+            style="@style/TextAppearance.AppCompat.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Regular price: 65€" />
@@ -21,6 +22,7 @@
 
         <TextView
             android:id="@+id/activity_basket_promo"
+            style="@style/TextAppearance.AppCompat.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/activity_basket_regular_price"
@@ -29,6 +31,7 @@
 
         <TextView
             android:id="@+id/activity_basket_final_price"
+            style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/activity_basket_promo"

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/basket_item_layout"
     android:layout_width="match_parent"
-    android:layout_marginEnd="12dp"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
@@ -20,39 +19,45 @@
         android:scaleType="centerInside"
         android:src="@drawable/hp3" />
 
-
-    <TextView
-        android:id="@+id/basket_item_label"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:textStyle="bold"
+        android:layout_marginEnd="12dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/basket_item_image"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Henri Potier et les reliques de la mortddlvlmsvmsdlsdmlsdv lsdsdvd " />
-
-    <TextView
-        android:id="@+id/basket_item_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/basket_item_label"
-        app:layout_constraintTop_toBottomOf="@id/basket_item_label"
-        tools:text="35€" />
+        app:layout_constraintTop_toTopOf="parent">
 
 
-    <TextView
-        android:id="@+id/item_basket_quantity"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/basket_item_label"
-        app:layout_constraintTop_toBottomOf="@id/basket_item_price"
-        tools:text="x5" />
+        <TextView
+            android:id="@+id/basket_item_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingEnd="12dp"
+            android:textStyle="bold"
+            tools:text="Henri Potier et les reliques de la mortddlvlmsvmsdlsdmlsdv lsdsdvd " />
+
+
+        <TextView
+            android:id="@+id/basket_item_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="35€" />
+
+
+        <TextView
+            android:id="@+id/item_basket_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="x5" />
+    </LinearLayout>
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorPrimaryDark" />
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintTop_toBottomOf="@id/basket_item_image" />
 
 </android.support.constraint.ConstraintLayout>

@@ -61,7 +61,7 @@ public class BookActivity extends HenriPotierActivity {
             mBook = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(getIntent().getStringExtra(EXTRA_BOOK_ID))).build().unique();
             setUpView(mBook);
         }
-
+//        buttonEditQuantity.setText(getString(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,12 +85,14 @@ public class BookActivity extends HenriPotierActivity {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 mBasket.editQuantityBook(mBook, newVal);
+                buttonEditQuantity.setText(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook)));
             }
         };
 
         mNumberPickerDialog = new NumberPickerDialog(BookActivity.this,
                 mBook.getTitle(),
                 onValueChangeListener,
+
                 10,
                 1,
                 mBasket.getBooksQuantitiesMap().get(mBook));
@@ -114,6 +116,7 @@ public class BookActivity extends HenriPotierActivity {
     @OnClick(R.id.activity_book_add_to_basket)
     public void clickAddToBasket() {
         mBasket.addBookToBasket(mBook);
+        buttonEditQuantity.setText(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook)));
         initNumberPickerDialog();
         setButtonView();
     }
@@ -128,6 +131,4 @@ public class BookActivity extends HenriPotierActivity {
     public void editQuantity() {
         mNumberPickerDialog.show();
     }
-
-
 }

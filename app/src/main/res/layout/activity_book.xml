@@ -77,7 +77,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="1dp"
                 android:layout_weight="1"
-                android:text="@string/edit_quantity"
                 tools:visibility="gone" />
         </LinearLayout>
 

@@ -51,7 +51,7 @@ public class BasketItemView extends RecyclerView.ViewHolder {
         Picasso.get().load(mBook.getCover()).into(imageView);
         itemLabel.setText(mBook.getTitle());
         itemPrice.setText(String.format("%s €", mBook.getPrice()));
-        itemQuantity.setText(String.format("x %o", entry.getValue()));
+        itemQuantity.setText(String.format("x %s", entry.getValue()));
         initNumberPickerDialog();
 
     }
@@ -84,7 +84,7 @@ public class BasketItemView extends RecyclerView.ViewHolder {
         };
 
         mNumberPickerDialog = new NumberPickerDialog(itemView.getContext(),
-                mBook.getTitle(),
+                itemView.getContext().getString(R.string.edit_quantity),
                 onValueChangeListener,
                 10,
                 1,
@@ -95,6 +95,6 @@ public class BasketItemView extends RecyclerView.ViewHolder {
 
     @OnClick(R.id.basket_item_layout)
     public void onClick() {
-      mNumberPickerDialog.show();
+        mNumberPickerDialog.show();
     }
 }
