@@ -2,8 +2,6 @@ package cdreyfus.xebia_henri_potier.activity.models;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -11,9 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
@@ -25,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import cdreyfus.xebia_henri_potier.BuildConfig;
 import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.activity.BasketActivity;
 import cdreyfus.xebia_henri_potier.models.Book;
 import cdreyfus.xebia_henri_potier.models.BookDao;
 import cdreyfus.xebia_henri_potier.models.CommercialOffer;
@@ -34,6 +28,7 @@ import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializ
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
@@ -52,12 +47,7 @@ public class HenriPotierActivity extends AppCompatActivity {
     }
 
     private Retrofit setRetrofit() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-                Timber.tag("OkHttp").d(message);
-            }
-        }).setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Timber.tag("OkHttp").d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
 
         if (BuildConfig.DEBUG) {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -81,6 +71,7 @@ public class HenriPotierActivity extends AppCompatActivity {
         return new Retrofit.Builder()
                 .baseUrl("http://henri-potier.xebia.fr/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
                 .build();
     }
@@ -100,12 +91,9 @@ public class HenriPotierActivity extends AppCompatActivity {
             setTitle(getString(R.string.no_internet_connection));
             setMessage(getString(R.string.message_not_connected));
 
-            setButton(BUTTON_POSITIVE, getString(R.string.ok), new OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dismiss();
-                    onBackPressed();
-                }
+            setButton(BUTTON_POSITIVE, getString(R.string.ok), (dialog, which) -> {
+                dismiss();
+                onBackPressed();
             });
         }
     }

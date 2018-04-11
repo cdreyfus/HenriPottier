@@ -1,5 +1,6 @@
 package cdreyfus.xebia_henri_potier.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,9 +24,10 @@ import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
 import cdreyfus.xebia_henri_potier.adapter.CatalogueAdapter;
 import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
 import cdreyfus.xebia_henri_potier.models.Book;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class CatalogueActivity extends HenriPotierActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -69,26 +71,21 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
         refreshLayout.setRefreshing(false);
     }
 
+    @SuppressLint("CheckResult")
     public void getCatalogue() {
         if (isOnline()) {
 
             BookInterface bookInterface = mRetrofit.create(BookInterface.class);
-            Call<List<Book>> call = bookInterface.getBooks();
-            call.enqueue(new Callback<List<Book>>() {
-                @Override
-                public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
-                    if (response.isSuccessful()) {
-                        bookDao.insertOrReplaceInTx(response.body());
+            Observable<List<Book>> bookObservable = bookInterface.getBooks();
+
+            bookObservable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map((Function<List<Book>, Object>) books -> books)
+                    .subscribe(o -> {
+                        bookDao.insertOrReplaceInTx((Iterable<Book>) o);
                         catalogueAdapter.updateApdater();
                         setView();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<Book>> call, Throwable t) {
-                    Timber.d(t);
-                }
-            });
+                    }, Timber::d);
         } else {
             NotConnectedAlertDialog notConnectedAlertDialog = new NotConnectedAlertDialog(CatalogueActivity.this);
             notConnectedAlertDialog.show();
@@ -101,12 +98,7 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
         mFrameLayout.setVisibility(View.GONE);
         progressBarRefreshList.setVisibility(View.VISIBLE);
 
-        refreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getCatalogue();
-            }
-        }, 1500);
+        refreshLayout.postDelayed(this::getCatalogue, 1500);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -2,7 +2,6 @@ package cdreyfus.xebia_henri_potier.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -18,9 +17,9 @@ import cdreyfus.xebia_henri_potier.adapter.BasketAdapter;
 import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
 import cdreyfus.xebia_henri_potier.models.Basket;
 import cdreyfus.xebia_henri_potier.models.CommercialOffersResponse;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class BasketActivity extends HenriPotierActivity {
@@ -66,42 +65,35 @@ public class BasketActivity extends HenriPotierActivity {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     protected void onResume() {
         super.onResume();
         setUpListBasket();
-        mRegularPrice.setText(String.format("Total: %s €", mBasket.getRegularPrice()));
+        mRegularPrice.setText(String.format("Total: %.2f €", mBasket.getRegularPrice()));
     }
 
+    @SuppressLint({"CheckResult", "DefaultLocale"})
     private void getCommercialOffersForBasket() {
         if (isOnline()) {
             BookInterface bookInterface = mRetrofit.create(BookInterface.class);
-            Call<CommercialOffersResponse> call = bookInterface.getCommercialOffer(mBasket.getPromotionCode());
-            call.enqueue(new Callback<CommercialOffersResponse>() {
-                @SuppressLint("DefaultLocale")
-                @Override
-                public void onResponse(@NonNull Call<CommercialOffersResponse> call, @NonNull Response<CommercialOffersResponse> response) {
-                    if (response.isSuccessful()) {
-                        mPromo.setText(String.format("Promotion: -%s €", mBasket.getPromotionValue(response.body())));
-                        float price = mBasket.applyBestCommercialOffer(response.body(), mBasket.getRegularPrice());
-                        mFinalPrice.setText(String.format("New Total: %s €", price));
-                    }
-                }
 
-                @Override
-                public void onFailure(@NonNull Call<CommercialOffersResponse> call, @NonNull Throwable t) {
-                    Timber.d(t);
-                }
-            });
-        } else {
-            NotConnectedAlertDialog notConnectedAlertDialog = new NotConnectedAlertDialog(BasketActivity.this);
-            notConnectedAlertDialog.show();
-        }
+            Single<CommercialOffersResponse> singleCommercialOffer = bookInterface.getCommercialOffer(mBasket.getPromotionCode());
+
+            singleCommercialOffer.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(commercialOffersResponse -> {
+                        mPromo.setText(String.format("Promotion: -%.2f €", mBasket.getPromotionValue(commercialOffersResponse)));
+                        float price = mBasket.applyBestCommercialOffer(commercialOffersResponse, mBasket.getRegularPrice());
+                        mFinalPrice.setText(String.format("New Total: %.2f €", price));
+                    }, Timber::d);
+            }
     }
 
+    @SuppressLint("DefaultLocale")
     public void updateBasket(){
         setUpListBasket();
-        mRegularPrice.setText(String.format("Total: %s €", mBasket.getRegularPrice()));
+        mRegularPrice.setText(String.format("Total: %.2f €", mBasket.getRegularPrice()));
         basketAdapter.notifyDataSetChanged();
     }
 

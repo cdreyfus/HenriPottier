@@ -57,30 +57,21 @@ public class BasketItemView extends RecyclerView.ViewHolder {
     }
 
     private void initNumberPickerDialog() {
-        NumberPicker.OnValueChangeListener onValueChangeListener = new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mBasket.editQuantityBook(mBook, newVal);
-                ((BasketActivity) itemView.getContext()).updateBasket();
-            }
+        NumberPicker.OnValueChangeListener onValueChangeListener = (picker, oldVal, newVal) -> {
+            mBasket.editQuantityBook(mBook, newVal);
+            ((BasketActivity) itemView.getContext()).updateBasket();
         };
 
-        DialogInterface.OnClickListener goToBook = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                Intent startBook = new Intent(itemView.getContext(), BookActivity.class);
-                startBook.putExtra(EXTRA_BOOK_ID, mBook.getIsbn());
-            }
+        DialogInterface.OnClickListener goToBook = (dialog, which) -> {
+            dialog.dismiss();
+            Intent startBook = new Intent(itemView.getContext(), BookActivity.class);
+            startBook.putExtra(EXTRA_BOOK_ID, mBook.getIsbn());
         };
 
-        DialogInterface.OnClickListener removeFromBasket = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                mBasket.deleteBookFromBasket(mBook);
-                ((BasketActivity) itemView.getContext()).updateBasket();
-            }
+        DialogInterface.OnClickListener removeFromBasket = (dialog, which) -> {
+            dialog.dismiss();
+            mBasket.deleteBookFromBasket(mBook);
+            ((BasketActivity) itemView.getContext()).updateBasket();
         };
 
         mNumberPickerDialog = new NumberPickerDialog(itemView.getContext(),
