@@ -15,7 +15,7 @@ public class Basket {
         return mInstance;
     }
 
-    Basket() {
+    public Basket() {
         booksQuantitiesMap = new LinkedHashMap<>();
     }
 

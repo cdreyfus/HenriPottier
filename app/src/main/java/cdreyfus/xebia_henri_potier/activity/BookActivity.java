@@ -18,7 +18,6 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
 import cdreyfus.xebia_henri_potier.models.Basket;
@@ -53,7 +52,6 @@ public class BookActivity extends HenriPotierActivity {
         ButterKnife.bind(this);
         mBasket = Basket.getInstance();
 
-        BookDao bookDao = ((HenriPotierApplication) getApplication()).getDaoSession().getBookDao();
         bookDao.loadAll();
 
         if (getIntent().hasExtra(EXTRA_BOOK_ID)) {
@@ -61,7 +59,6 @@ public class BookActivity extends HenriPotierActivity {
             mBook = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(getIntent().getStringExtra(EXTRA_BOOK_ID))).build().unique();
             setUpView(mBook);
         }
-//        buttonEditQuantity.setText(getString(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,24 +78,20 @@ public class BookActivity extends HenriPotierActivity {
 
 
     private void initNumberPickerDialog() {
-        NumberPicker.OnValueChangeListener onValueChangeListener = new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mBasket.editQuantityBook(mBook, newVal);
-                buttonEditQuantity.setText(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook)));
-            }
+        NumberPicker.OnValueChangeListener onValueChangeListener = (picker, oldVal, newVal) -> {
+            mBasket.editQuantityBook(mBook, newVal);
+            buttonEditQuantity.setText(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook)));
         };
 
         mNumberPickerDialog = new NumberPickerDialog(BookActivity.this,
                 mBook.getTitle(),
                 onValueChangeListener,
-
                 10,
                 1,
                 mBasket.getBooksQuantitiesMap().get(mBook));
     }
 
-    private void setUpView(Book book) {
+    protected void setUpView(Book book) {
         Picasso.get().load(book.getCover()).into(bookCover);
         bookPrice.setText(String.format("%s €", book.getPrice()));
         bookSynopsis.setText(book.getSynopsis());
