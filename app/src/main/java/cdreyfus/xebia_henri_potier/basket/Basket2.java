@@ -16,6 +16,7 @@ import cdreyfus.xebia_henri_potier.models.CommercialOffersResponse;
 import cdreyfus.xebia_henri_potier.models.deserializer.BookDeserializer;
 import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
@@ -28,6 +29,7 @@ import timber.log.Timber;
 public class Basket2 {
 
     private static Basket2 mInstance;
+
     private LinkedHashMap<Book, Integer> booksQuantitiesMap;
 
     public static Basket2 getInstance() {
@@ -69,6 +71,16 @@ public class Basket2 {
         }
     }
 
+    public float getFinalPrice() {
+        float regularPrice = getRegularPrice();
+        return regularPrice - applyBestCommercialOffer(getCommercialOffersResponse(), regularPrice);
+    }
+
+    public float getPromoValue(){
+        return getFinalPrice() - getRegularPrice();
+    }
+
+
     private float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice) {
         float minimumValue = regularPrice;
         for (CommercialOffer commercialOffer : commercialOffersResponse.getCommercialOffers()) {
@@ -77,7 +89,7 @@ public class Basket2 {
         return minimumValue;
     }
 
-    public String getPromotionCode() {
+    private String getPromotionCode() {
         StringBuilder promotionCode = new StringBuilder();
         for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++) {
@@ -89,45 +101,13 @@ public class Basket2 {
         return promotionCode.toString();
     }
 
-    public float getPromotionValue(CommercialOffersResponse commercialOffersResponse) {
-        float regularPrice = getRegularPrice();
-        return regularPrice - applyBestCommercialOffer(commercialOffersResponse, regularPrice);
-    }
-
-//    private void getCommercialOffersForBasket() {
-//
-//        HenriPotierApplication.mRetrofit;
-////        if (isOnline()) {
-//        BookInterface bookInterface = (HenriPotierActivity.mRetrofit).create(BookInterface.class);
-//
-//        Single<CommercialOffersResponse> singleCommercialOffer = bookInterface.getCommercialOffer(mBasket.getPromotionCode());
-//
-//        singleCommercialOffer.subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(commercialOffersResponse -> {
-//                    mPromo.setText(String.format("Promotion: -%.2f €", mBasket.getPromotionValue(commercialOffersResponse)));
-//                    float price = mBasket.applyBestCommercialOffer(commercialOffersResponse, mBasket.getRegularPrice());
-//                    mFinalPrice.setText(String.format("New Total: %.2f €", price));
-//                }, Timber::d);
-//    }
-
-
-    private CommercialOffer getCommercialOffer() {
-
-        Retrofit retrofit = setRetrofit();
-        BookInterface bookInterface = retrofit.create(BookInterface.class);
-        Observable<CommercialOffersResponse> singleCommercialOffer = bookInterface.getCommercialOffer(getPromotionCode());
-
-
-        return singleCommercialOffer.subscribeOn(Schedulers.io())
+    private CommercialOffersResponse getCommercialOffersResponse(){
+        BookInterface bookInterface = setRetrofit().create(BookInterface.class);
+        Observable<CommercialOffersResponse> observableCommercialOffer = bookInterface.getCommercialOffer(getPromotionCode());
+        return observableCommercialOffer.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(commercialOffersResponse -> {
-                }, Timber::d);
-
-        
+                .blockingFirst();
     }
-//    }
-
 
     private Retrofit setRetrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Timber.tag("OkHttp").d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
