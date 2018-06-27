@@ -11,7 +11,7 @@ public class CommercialOffersResponse {
     private
     List<CommercialOffer> commercialOffers;
 
-    public CommercialOffersResponse(){
+    CommercialOffersResponse(){
         commercialOffers = new ArrayList<>();
     }
 

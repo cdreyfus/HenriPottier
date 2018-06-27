@@ -15,6 +15,6 @@ public interface BookInterface {
     Observable<List<Book>> getBooks();
 
     @GET("books/{list_books}/commercialOffers")
-    Single<CommercialOffersResponse> getCommercialOffer(@Path("list_books") String list_books);
+    Observable<CommercialOffersResponse> getCommercialOffer(@Path("list_books") String list_books);
 
 }
