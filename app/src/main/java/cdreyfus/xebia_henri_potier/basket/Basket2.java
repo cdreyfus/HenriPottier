@@ -73,12 +73,13 @@ public class Basket2 {
 
     public float getFinalPrice() {
         float regularPrice = getRegularPrice();
-        return regularPrice - applyBestCommercialOffer(getCommercialOffersResponse(), regularPrice);
+//        return regularPrice - applyBestCommercialOffer(getCommercialOffersResponse(), regularPrice);
+        return regularPrice;
     }
 
-    public float getPromoValue(){
-        return getFinalPrice() - getRegularPrice();
-    }
+//    public float getPromoValue(){
+//        return getFinalPrice() - getRegularPrice();
+//    }
 
 
     private float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice) {
@@ -104,6 +105,8 @@ public class Basket2 {
     private CommercialOffersResponse getCommercialOffersResponse(){
         BookInterface bookInterface = setRetrofit().create(BookInterface.class);
         Observable<CommercialOffersResponse> observableCommercialOffer = bookInterface.getCommercialOffer(getPromotionCode());
+
+
         return observableCommercialOffer.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .blockingFirst();

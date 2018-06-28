@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
 import cdreyfus.xebia_henri_potier.adapter.CatalogueAdapter;
+import cdreyfus.xebia_henri_potier.basket.BasketActivity;
 import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
 import cdreyfus.xebia_henri_potier.models.Book;
 import io.reactivex.Observable;

@@ -30,8 +30,11 @@ public class BasketPresenter {
 //        setPrices();
 //    }
 
-    private void setPrices(){
-        view.updatePrices(basket2.getRegularPrice(), basket2.getPromoValue(),basket2.getFinalPrice());
+    public void setPrices(){
+
+        float finalPrice = basket2.getFinalPrice();
+        float regularPrice = basket2.getRegularPrice();
+        view.updatePrices(regularPrice, finalPrice - regularPrice,finalPrice);
     }
 
     public interface View {
