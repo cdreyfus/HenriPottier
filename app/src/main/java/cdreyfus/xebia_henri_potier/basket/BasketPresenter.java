@@ -1,44 +1,123 @@
 package cdreyfus.xebia_henri_potier.basket;
 
+import android.annotation.SuppressLint;
+
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.LinkedHashMap;
+import java.util.concurrent.TimeUnit;
+
+import cdreyfus.xebia_henri_potier.BuildConfig;
 import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 public class BasketPresenter {
 
-    private Basket2 basket2;
+    private Basket basket;
     private View view;
 
-    public BasketPresenter (View view){
+    public BasketPresenter(View view) {
         this.view = view;
-        basket2 = Basket2.getInstance();
+        basket = Basket.getInstance();
     }
 
 //    public void addBook(Book book){
-//        basket2.addBookToBasket(book);
+//        basket.addBookToBasket(book);
 //        view.updateBasketContent();
 //        setPrices();
 //    }
 //
 //    public void removeBook(Book book){
-//        basket2.deleteBookFromBasket(book);
+//        basket.deleteBookFromBasket(book);
 //        view.updateBasketContent();
 //        setPrices();
 //    }
 //
 //    public void editQuantityBooks(Book book, int quantity){
-//        basket2.editQuantityBook(book, quantity);
+//        basket.editQuantityBook(book, quantity);
 //        view.updateBasketContent();
 //        setPrices();
 //    }
 
-    public void setPrices(){
+    @SuppressLint("CheckResult")
+    public void setPrices() {
 
-        float finalPrice = basket2.getFinalPrice();
-        float regularPrice = basket2.getRegularPrice();
-        view.updatePrices(regularPrice, finalPrice - regularPrice,finalPrice);
+        float regularPrice = basket.getRegularPrice();
+        view.setRegularPrice(regularPrice);
+
+        if (!basket.isEmpty()) {
+            ICommercialOfferApi commercialOfferInterface = setRetrofit().create(ICommercialOfferApi.class);
+
+            Single<CommercialOffersResponse> singleCommercialOffer = commercialOfferInterface.getCommercialOffer(basket.getPromotionCode());
+
+            singleCommercialOffer.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(commercialOffersResponse -> {
+                        float finalPrice = basket.applyBestCommercialOffer(commercialOffersResponse, regularPrice);
+                        view.setFinalPrice(finalPrice, finalPrice - regularPrice);
+
+                    }, Timber::d);
+        } else {
+            view.setFinalPrice(regularPrice, 0);
+        }
+    }
+
+    public void updateBasketContent() {
+        if (basket.isEmpty()) {
+            view.showEmpty();
+        } else {
+            view.showBooks(basket.getBooksQuantitiesMap());
+        }
+    }
+
+    private Retrofit setRetrofit() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Timber.tag("OkHttp").d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        if (BuildConfig.DEBUG) {
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        } else {
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        }
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .addNetworkInterceptor(new StethoInterceptor())
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer())
+                .create();
+
+        return new Retrofit.Builder()
+                .baseUrl("http://henri-potier.xebia.fr/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(okHttpClient)
+                .build();
     }
 
     public interface View {
-        void updateBasketContent();
-        void updatePrices(float regular, float promo, float finalPrice);
+
+        void setRegularPrice(float regularPrice);
+
+        void setFinalPrice(float finalPrice, float promo);
+
+        void showBooks(LinkedHashMap<Book, Integer> listBooks);
+
+        void showEmpty();
     }
 }

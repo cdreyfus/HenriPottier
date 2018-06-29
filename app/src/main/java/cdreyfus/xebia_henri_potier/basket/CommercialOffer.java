@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.models;
+package cdreyfus.xebia_henri_potier.basket;
 
 public abstract class CommercialOffer{
 

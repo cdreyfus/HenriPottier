@@ -1,6 +1,8 @@
-package cdreyfus.xebia_henri_potier.models;
+package cdreyfus.xebia_henri_potier.basket;
 
-public class Minus extends CommercialOffer{
+import cdreyfus.xebia_henri_potier.basket.CommercialOffer;
+
+public class Minus extends CommercialOffer {
     private int value;
 
     public Minus(int value) {

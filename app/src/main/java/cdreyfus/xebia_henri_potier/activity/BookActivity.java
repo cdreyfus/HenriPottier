@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
-import cdreyfus.xebia_henri_potier.basket.Basket2;
+import cdreyfus.xebia_henri_potier.basket.Basket;
 import cdreyfus.xebia_henri_potier.basket.BasketActivity;
 import cdreyfus.xebia_henri_potier.models.Book;
 import cdreyfus.xebia_henri_potier.models.BookDao;
@@ -43,7 +43,7 @@ public class BookActivity extends HenriPotierActivity {
     Button buttonRemoveFromBasket;
 
     private Book mBook;
-    private Basket2 mBasket;
+    private Basket mBasket;
     private NumberPickerDialog mNumberPickerDialog;
 
     @Override
@@ -51,7 +51,7 @@ public class BookActivity extends HenriPotierActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
         ButterKnife.bind(this);
-        mBasket = Basket2.getInstance();
+        mBasket = Basket.getInstance();
 
         bookDao.loadAll();
 

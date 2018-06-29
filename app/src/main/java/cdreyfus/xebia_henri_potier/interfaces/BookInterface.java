@@ -3,9 +3,8 @@ package cdreyfus.xebia_henri_potier.interfaces;
 import java.util.List;
 
 import cdreyfus.xebia_henri_potier.models.Book;
-import cdreyfus.xebia_henri_potier.models.CommercialOffersResponse;
+import cdreyfus.xebia_henri_potier.basket.CommercialOffersResponse;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 

@@ -1,6 +1,8 @@
-package cdreyfus.xebia_henri_potier.models;
+package cdreyfus.xebia_henri_potier.basket;
 
-public class Slice extends CommercialOffer{
+import cdreyfus.xebia_henri_potier.basket.CommercialOffer;
+
+public class Slice extends CommercialOffer {
     private int value;
     private int sliceValue;
 

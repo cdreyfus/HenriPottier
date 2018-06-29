@@ -3,9 +3,7 @@ package cdreyfus.xebia_henri_potier.models;
 import org.junit.Assert;
 import org.junit.Test;
 
-import cdreyfus.xebia_henri_potier.models.Slice;
-
-import static org.junit.Assert.*;
+import cdreyfus.xebia_henri_potier.basket.Slice;
 
 public class SliceTest {
 

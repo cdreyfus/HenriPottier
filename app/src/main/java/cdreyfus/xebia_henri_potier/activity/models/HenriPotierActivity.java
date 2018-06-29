@@ -22,7 +22,7 @@ import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.models.Book;
 import cdreyfus.xebia_henri_potier.models.BookDao;
-import cdreyfus.xebia_henri_potier.models.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.CommercialOffer;
 import cdreyfus.xebia_henri_potier.models.deserializer.BookDeserializer;
 import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
 import okhttp3.OkHttpClient;

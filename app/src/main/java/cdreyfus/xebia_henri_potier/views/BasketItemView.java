@@ -1,5 +1,6 @@
 package cdreyfus.xebia_henri_potier.views;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,7 +16,7 @@ import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.models.Book;
 
-public class BasketItemView extends RecyclerView.ViewHolder {
+public class BasketItemView extends View {
 
 
     @BindView(R.id.basket_item_label)
@@ -27,16 +28,15 @@ public class BasketItemView extends RecyclerView.ViewHolder {
     @BindView(R.id.item_basket_quantity)
     TextView itemQuantity;
 
-    private Book mBook;
     private NumberPickerDialog mNumberPickerDialog;
 
-    public BasketItemView(View itemView) {
-        super(itemView);
-        ButterKnife.bind(this, itemView);
+    public BasketItemView(Context context) {
+        super(context);
+        ButterKnife.bind(this);
     }
 
-    public void setUpItem(Map.Entry<Book, Integer> entry) {
-        mBook = entry.getKey();
+    public void bindView(Map.Entry<Book, Integer> entry) {
+        Book mBook = entry.getKey();
         Picasso.get().load(mBook.getCover()).into(imageView);
         itemLabel.setText(mBook.getTitle());
         itemPrice.setText(String.format("%s €", mBook.getPrice()));
