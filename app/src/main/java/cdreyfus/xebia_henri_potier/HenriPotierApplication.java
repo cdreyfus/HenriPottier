@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import cdreyfus.xebia_henri_potier.logs.FileLoggingTree;
 import cdreyfus.xebia_henri_potier.models.Book;
-import cdreyfus.xebia_henri_potier.basket.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
 import cdreyfus.xebia_henri_potier.models.DaoMaster;
 import cdreyfus.xebia_henri_potier.models.DaoSession;
 import cdreyfus.xebia_henri_potier.models.deserializer.BookDeserializer;

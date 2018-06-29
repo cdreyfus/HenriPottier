@@ -105,12 +105,13 @@ public class BookActivity extends HenriPotierActivity {
         buttonAddBookToBasket.setVisibility(mBasket.getBooksQuantitiesMap().containsKey(mBook) ? View.GONE : View.VISIBLE);
         buttonEditQuantity.setVisibility(mBasket.getBooksQuantitiesMap().containsKey(mBook) ? View.VISIBLE : View.GONE);
         buttonRemoveFromBasket.setVisibility(mBasket.getBooksQuantitiesMap().containsKey(mBook) ? View.VISIBLE : View.GONE);
+
+        buttonEditQuantity.setText(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook)));
     }
 
     @OnClick(R.id.activity_book_add_to_basket)
     public void clickAddToBasket() {
         mBasket.addBookToBasket(mBook);
-        buttonEditQuantity.setText(String.format("%s (%s)", getString(R.string.edit_quantity), mBasket.getBooksQuantitiesMap().get(mBook)));
         initNumberPickerDialog();
         setButtonView();
     }

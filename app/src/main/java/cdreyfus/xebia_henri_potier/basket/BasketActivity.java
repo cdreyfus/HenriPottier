@@ -61,10 +61,15 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
     }
 
     @Override
-    public void setFinalPrice(float finalPrice, float promoValue) {
+    public void setPromoValue(float promoValue) {
         mPromo.setText(String.format(Locale.ENGLISH, "Promotion: %.2f €", promoValue));
+    }
+
+    @Override
+    public void setFinalPrice(float finalPrice) {
         mFinalPrice.setText(String.format(Locale.ENGLISH, "New Total: %.2f €", finalPrice));
     }
+
 
     @Override
     public void showBooks(LinkedHashMap<Book, Integer> linkedHashMap) {

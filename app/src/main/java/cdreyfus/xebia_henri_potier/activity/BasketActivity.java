@@ -16,7 +16,7 @@
 //import cdreyfus.xebia_henri_potier.adapter.BasketAdapter;
 //import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
 //import cdreyfus.xebia_henri_potier.models.Basket;
-//import cdreyfus.xebia_henri_potier.basket.CommercialOffersResponse;
+//import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 //import io.reactivex.Single;
 //import io.reactivex.android.schedulers.AndroidSchedulers;
 //import io.reactivex.schedulers.Schedulers;

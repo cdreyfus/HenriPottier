@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.basket;
+package cdreyfus.xebia_henri_potier.basket.promotion;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -11,7 +11,7 @@ public class CommercialOffersResponse {
     private
     List<CommercialOffer> commercialOffers;
 
-    CommercialOffersResponse(){
+    public CommercialOffersResponse(){
         commercialOffers = new ArrayList<>();
     }
 

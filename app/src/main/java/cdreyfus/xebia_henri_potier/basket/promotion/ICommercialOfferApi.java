@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.basket;
+package cdreyfus.xebia_henri_potier.basket.promotion;
 
 import io.reactivex.Single;
 import retrofit2.http.GET;

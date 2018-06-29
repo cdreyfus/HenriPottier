@@ -10,6 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
 import cdreyfus.xebia_henri_potier.BuildConfig;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
+import cdreyfus.xebia_henri_potier.basket.promotion.ICommercialOfferApi;
 import cdreyfus.xebia_henri_potier.models.Book;
 import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
 import io.reactivex.Single;
@@ -32,24 +35,6 @@ public class BasketPresenter {
         basket = Basket.getInstance();
     }
 
-//    public void addBook(Book book){
-//        basket.addBookToBasket(book);
-//        view.updateBasketContent();
-//        setPrices();
-//    }
-//
-//    public void removeBook(Book book){
-//        basket.deleteBookFromBasket(book);
-//        view.updateBasketContent();
-//        setPrices();
-//    }
-//
-//    public void editQuantityBooks(Book book, int quantity){
-//        basket.editQuantityBook(book, quantity);
-//        view.updateBasketContent();
-//        setPrices();
-//    }
-
     @SuppressLint("CheckResult")
     public void setPrices() {
 
@@ -65,11 +50,13 @@ public class BasketPresenter {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(commercialOffersResponse -> {
                         float finalPrice = basket.applyBestCommercialOffer(commercialOffersResponse, regularPrice);
-                        view.setFinalPrice(finalPrice, finalPrice - regularPrice);
+                        view.setFinalPrice(finalPrice);
+                        view.setPromoValue(finalPrice - regularPrice);
 
                     }, Timber::d);
         } else {
-            view.setFinalPrice(regularPrice, 0);
+            view.setFinalPrice(regularPrice);
+            view.setPromoValue(0);
         }
     }
 
@@ -114,7 +101,9 @@ public class BasketPresenter {
 
         void setRegularPrice(float regularPrice);
 
-        void setFinalPrice(float finalPrice, float promo);
+        void setFinalPrice(float finalPrice);
+
+        void setPromoValue(float promoValue);
 
         void showBooks(LinkedHashMap<Book, Integer> listBooks);
 

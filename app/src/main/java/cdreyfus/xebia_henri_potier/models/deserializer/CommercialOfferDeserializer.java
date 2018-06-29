@@ -8,10 +8,10 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import cdreyfus.xebia_henri_potier.basket.CommercialOffer;
-import cdreyfus.xebia_henri_potier.basket.Minus;
-import cdreyfus.xebia_henri_potier.basket.Percentage;
-import cdreyfus.xebia_henri_potier.basket.Slice;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.promotion.Minus;
+import cdreyfus.xebia_henri_potier.basket.promotion.Percentage;
+import cdreyfus.xebia_henri_potier.basket.promotion.Slice;
 
 public class CommercialOfferDeserializer implements JsonDeserializer<CommercialOffer> {
 

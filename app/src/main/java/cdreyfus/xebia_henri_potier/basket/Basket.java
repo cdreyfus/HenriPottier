@@ -3,6 +3,8 @@ package cdreyfus.xebia_henri_potier.basket;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 import cdreyfus.xebia_henri_potier.models.Book;
 
 public class Basket {
@@ -54,10 +56,10 @@ public class Basket {
         }
     }
 
-    public float getPromotionValue(CommercialOffersResponse commercialOffersResponse) {
-        float regularPrice = getRegularPrice();
-        return regularPrice - applyBestCommercialOffer(commercialOffersResponse, regularPrice);
-    }
+//    public float getPromotionValue(CommercialOffersResponse commercialOffersResponse) {
+//        float regularPrice = getRegularPrice();
+//        return regularPrice - applyBestCommercialOffer(commercialOffersResponse, regularPrice);
+//    }
 
 
     public float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice) {
