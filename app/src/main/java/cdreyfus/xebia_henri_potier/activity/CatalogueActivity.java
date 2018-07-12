@@ -3,7 +3,6 @@ package cdreyfus.xebia_henri_potier.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,8 +23,8 @@ import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
 import cdreyfus.xebia_henri_potier.adapter.CatalogueAdapter;
 import cdreyfus.xebia_henri_potier.basket.BasketActivity;
-import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.IBookInterface;
+import cdreyfus.xebia_henri_potier.book.Book;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
@@ -77,8 +76,8 @@ public class CatalogueActivity extends HenriPotierActivity implements SwipeRefre
     public void getCatalogue() {
         if (isOnline()) {
 
-            BookInterface bookInterface = mRetrofit.create(BookInterface.class);
-            Observable<List<Book>> bookObservable = bookInterface.getBooks();
+            IBookInterface IBookInterface = mRetrofit.create(IBookInterface.class);
+            Observable<List<Book>> bookObservable = IBookInterface.getBooks();
 
             bookObservable.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

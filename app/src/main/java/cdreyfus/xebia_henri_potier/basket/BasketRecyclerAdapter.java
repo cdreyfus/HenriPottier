@@ -7,11 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 
 public class BasketRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

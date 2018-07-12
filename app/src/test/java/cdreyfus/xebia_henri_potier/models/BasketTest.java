@@ -9,6 +9,7 @@ import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 import cdreyfus.xebia_henri_potier.basket.promotion.Minus;
 import cdreyfus.xebia_henri_potier.basket.promotion.Percentage;
 import cdreyfus.xebia_henri_potier.basket.promotion.Slice;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 public class BasketTest {
 

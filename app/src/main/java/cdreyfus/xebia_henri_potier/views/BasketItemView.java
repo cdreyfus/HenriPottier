@@ -1,7 +1,6 @@
 package cdreyfus.xebia_henri_potier.views;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +13,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 public class BasketItemView extends View {
 

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 public class Basket {
 

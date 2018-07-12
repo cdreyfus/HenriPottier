@@ -1,14 +1,14 @@
-package cdreyfus.xebia_henri_potier.interfaces;
+package cdreyfus.xebia_henri_potier.book;
 
 import java.util.List;
 
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public interface BookInterface {
+public interface IBookInterface {
 
     @GET("books")
     Observable<List<Book>> getBooks();

@@ -14,7 +14,7 @@
 //import cdreyfus.xebia_henri_potier.R;
 //import cdreyfus.xebia_henri_potier.activity.models.HenriPotierActivity;
 //import cdreyfus.xebia_henri_potier.adapter.BasketAdapter;
-//import cdreyfus.xebia_henri_potier.interfaces.BookInterface;
+//import cdreyfus.xebia_henri_potier.book.IBookInterface;
 //import cdreyfus.xebia_henri_potier.models.Basket;
 //import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 //import io.reactivex.Single;
@@ -76,7 +76,7 @@
 //    @SuppressLint({"CheckResult", "DefaultLocale"})
 //    private void getCommercialOffersForBasket() {
 //        if (isOnline()) {
-//            BookInterface bookInterface = mRetrofit.create(BookInterface.class);
+//            IBookInterface bookInterface = mRetrofit.create(IBookInterface.class);
 //
 //            Single<CommercialOffersResponse> singleCommercialOffer = bookInterface.getCommercialOffer(mBasket.getPromotionCode());
 //

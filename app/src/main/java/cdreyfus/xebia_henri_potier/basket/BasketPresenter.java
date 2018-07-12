@@ -13,7 +13,7 @@ import cdreyfus.xebia_henri_potier.BuildConfig;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 import cdreyfus.xebia_henri_potier.basket.promotion.ICommercialOfferApi;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;

@@ -14,7 +14,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 public class BasketActivity extends AppCompatActivity implements BasketPresenter.View {
 

@@ -12,8 +12,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.activity.BookActivity;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
+import cdreyfus.xebia_henri_potier.book.BookActivity;
 
 import static cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_BOOK_ID;
 

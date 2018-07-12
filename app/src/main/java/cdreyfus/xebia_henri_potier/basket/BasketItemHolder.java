@@ -7,12 +7,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Map;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 public class BasketItemHolder extends RecyclerView.ViewHolder{
 
