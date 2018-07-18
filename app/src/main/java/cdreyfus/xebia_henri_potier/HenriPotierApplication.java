@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
 import cdreyfus.xebia_henri_potier.book.Book;
+import cdreyfus.xebia_henri_potier.book.BookDeserializer;
 import cdreyfus.xebia_henri_potier.book.DaoMaster;
 import cdreyfus.xebia_henri_potier.book.DaoSession;
 import cdreyfus.xebia_henri_potier.logs.FileLoggingTree;
-import cdreyfus.xebia_henri_potier.models.deserializer.BookDeserializer;
 import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

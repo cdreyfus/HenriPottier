@@ -97,6 +97,7 @@ public class BasketPresenter {
                 .build();
     }
 
+
     public interface View {
 
         void setRegularPrice(float regularPrice);
@@ -109,4 +110,5 @@ public class BasketPresenter {
 
         void showEmpty();
     }
+
 }
