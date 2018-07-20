@@ -7,14 +7,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Map;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
-public class BasketItemHolder extends RecyclerView.ViewHolder{
+public class BasketItemHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.basket_item_label)
     TextView itemLabel;
@@ -25,19 +23,16 @@ public class BasketItemHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.item_basket_quantity)
     TextView itemQuantity;
 
-    private final BasketPresenter basketPresenter;
-
-
-    public BasketItemHolder(View itemView, BasketPresenter basketPresenter) {
+    public BasketItemHolder(View itemView) {
         super(itemView);
-        this.basketPresenter = basketPresenter;
         ButterKnife.bind(this, itemView);
     }
 
-    public void setItem(Book book, int quantity){
+    public void setItem(Book book, int quantity) {
         Picasso.get().load(book.getCover()).into(imageView);
         itemLabel.setText(book.getTitle());
         itemPrice.setText(String.format("%s €", book.getPrice()));
         itemQuantity.setText(String.format("x %s", quantity));
     }
+
 }

@@ -10,7 +10,8 @@ import org.mockito.Mock;
 
 import java.lang.reflect.Type;
 
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
+import cdreyfus.xebia_henri_potier.book.BookDeserializer;
 
 public class BookDeserializerTest {
 

@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.cuiweiyou.numberpickerdialog.NumberPickerDialog;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Objects;
@@ -14,7 +16,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 public class BasketActivity extends AppCompatActivity implements BasketPresenter.View {
 
@@ -31,6 +33,7 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
 
     private BasketPresenter basketPresenter;
     private BasketRecyclerAdapter basketAdapter;
+    private NumberPickerDialog numberPickerDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,12 +42,15 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
         ButterKnife.bind(this);
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.basket);
 
-
         basketPresenter = new BasketPresenter(this);
         basketAdapter = new BasketRecyclerAdapter(basketPresenter);
         initRecycler();
 
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         basketPresenter.updateBasketContent();
         basketPresenter.setPrices();
     }
@@ -53,7 +59,6 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(basketAdapter);
     }
-
 
     @Override
     public void setRegularPrice(float regularPrice) {
@@ -86,5 +91,25 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
         recyclerView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void showNumberPicker(String title, int quantity) {
+        numberPickerDialog = new NumberPickerDialog(this,
+                title,
+                (picker, oldVal, newVal) -> {
+                    basketPresenter.editQuantityinBasket(newVal);
+                    basketPresenter.updateBasketContent();
+                    basketPresenter.setPrices();
+                }, 10,
+                1,
+                quantity);
+
+        numberPickerDialog.show();
+    }
+
+
+    @Override
+    public void hideNumberPicker() {
+        numberPickerDialog.hide();
+    }
 }
 
