@@ -3,7 +3,7 @@ package cdreyfus.xebia_henri_potier.models;
 import org.junit.Assert;
 import org.junit.Test;
 
-import cdreyfus.xebia_henri_potier.models.Percentage;
+import cdreyfus.xebia_henri_potier.basket.promotion.Percentage;
 
 public class PercentageTest {
 

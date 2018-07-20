@@ -10,9 +10,10 @@ import org.mockito.Mock;
 
 import java.lang.reflect.Type;
 
-import cdreyfus.xebia_henri_potier.models.Minus;
-import cdreyfus.xebia_henri_potier.models.Percentage;
-import cdreyfus.xebia_henri_potier.models.Slice;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferDeserializer;
+import cdreyfus.xebia_henri_potier.basket.promotion.Minus;
+import cdreyfus.xebia_henri_potier.basket.promotion.Percentage;
+import cdreyfus.xebia_henri_potier.basket.promotion.Slice;
 
 public class CommercialOfferDeserializerTest {
 

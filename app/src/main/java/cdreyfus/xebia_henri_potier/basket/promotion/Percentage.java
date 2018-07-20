@@ -1,6 +1,6 @@
-package cdreyfus.xebia_henri_potier.models;
+package cdreyfus.xebia_henri_potier.basket.promotion;
 
-public class Percentage extends CommercialOffer{
+public class Percentage extends CommercialOffer {
     private  int percentage;
 
     public Percentage(int percentage) {

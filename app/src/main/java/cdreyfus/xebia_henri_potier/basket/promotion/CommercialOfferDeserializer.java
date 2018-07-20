@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.models.deserializer;
+package cdreyfus.xebia_henri_potier.basket.promotion;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -8,10 +8,10 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import cdreyfus.xebia_henri_potier.models.CommercialOffer;
-import cdreyfus.xebia_henri_potier.models.Minus;
-import cdreyfus.xebia_henri_potier.models.Percentage;
-import cdreyfus.xebia_henri_potier.models.Slice;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.promotion.Minus;
+import cdreyfus.xebia_henri_potier.basket.promotion.Percentage;
+import cdreyfus.xebia_henri_potier.basket.promotion.Slice;
 
 public class CommercialOfferDeserializer implements JsonDeserializer<CommercialOffer> {
 

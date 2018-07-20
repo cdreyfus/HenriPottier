@@ -3,7 +3,7 @@ package cdreyfus.xebia_henri_potier.models;
 import org.junit.Assert;
 import org.junit.Test;
 
-import cdreyfus.xebia_henri_potier.models.Minus;
+import cdreyfus.xebia_henri_potier.basket.promotion.Minus;
 
 public class MinusTest {
 

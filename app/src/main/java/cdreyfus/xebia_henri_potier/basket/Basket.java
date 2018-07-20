@@ -1,11 +1,16 @@
-package cdreyfus.xebia_henri_potier.models;
+package cdreyfus.xebia_henri_potier.basket;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
+import cdreyfus.xebia_henri_potier.book.Book;
+
 public class Basket {
 
     private static Basket mInstance;
+
     private LinkedHashMap<Book, Integer> booksQuantitiesMap;
 
     public static Basket getInstance() {
@@ -17,6 +22,10 @@ public class Basket {
 
     public Basket() {
         booksQuantitiesMap = new LinkedHashMap<>();
+    }
+
+    public boolean isEmpty(){
+        return booksQuantitiesMap.isEmpty();
     }
 
     public float getRegularPrice() {
@@ -47,28 +56,29 @@ public class Basket {
         }
     }
 
-    public float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice){
+//    public float getPromotionValue(CommercialOffersResponse commercialOffersResponse) {
+//        float regularPrice = getRegularPrice();
+//        return regularPrice - applyBestCommercialOffer(commercialOffersResponse, regularPrice);
+//    }
+
+
+    public float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice) {
         float minimumValue = regularPrice;
-        for (CommercialOffer commercialOffer: commercialOffersResponse.getCommercialOffers()){
+        for (CommercialOffer commercialOffer : commercialOffersResponse.getCommercialOffers()) {
             minimumValue = Math.min(minimumValue, commercialOffer.applyOffer(regularPrice));
         }
         return minimumValue;
     }
 
-    public String getPromotionCode(){
+    public String getPromotionCode() {
         StringBuilder promotionCode = new StringBuilder();
-        for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()){
-            for(int i=0; i<entry.getValue(); i++){
+        for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
                 promotionCode.append(String.format("%s,", entry.getKey().getIsbn()));
             }
         }
-        promotionCode = promotionCode.deleteCharAt(promotionCode.length()-1);
+        promotionCode = promotionCode.deleteCharAt(promotionCode.length() - 1);
 
         return promotionCode.toString();
-    }
-
-    public float getPromotionValue(CommercialOffersResponse commercialOffersResponse) {
-        float regularPrice = getRegularPrice();
-        return regularPrice - applyBestCommercialOffer(commercialOffersResponse, regularPrice);
     }
 }

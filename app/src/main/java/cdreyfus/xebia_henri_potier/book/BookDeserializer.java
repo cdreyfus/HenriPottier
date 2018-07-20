@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.models.deserializer;
+package cdreyfus.xebia_henri_potier.book;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -9,7 +9,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import cdreyfus.xebia_henri_potier.models.Book;
+import cdreyfus.xebia_henri_potier.book.Book;
 
 public class BookDeserializer implements JsonDeserializer<Book> {
     @Override
