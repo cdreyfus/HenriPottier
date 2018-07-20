@@ -1,30 +1,28 @@
-package cdreyfus.xebia_henri_potier.activity.models;
+package cdreyfus.xebia_henri_potier.catalogue;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import cdreyfus.xebia_henri_potier.BuildConfig;
 import cdreyfus.xebia_henri_potier.HenriPotierApplication;
-import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
 import cdreyfus.xebia_henri_potier.book.Book;
 import cdreyfus.xebia_henri_potier.book.BookDao;
 import cdreyfus.xebia_henri_potier.book.BookDeserializer;
-import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
+import cdreyfus.xebia_henri_potier.book.IBookInterface;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -32,18 +30,48 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
-@SuppressLint("Registered")
-public class HenriPotierActivity extends AppCompatActivity {
+public class CataloguePresenter {
 
-    protected Retrofit mRetrofit;
-    protected BookDao bookDao;
+    private View view;
+    private Context context;
+    private Book book;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mRetrofit = setRetrofit();
-        bookDao = ((HenriPotierApplication) getApplication()).getDaoSession().getBookDao();
+    public CataloguePresenter(View view, Context context) {
+        this.view = view;
+        this.context = context;
+    }
 
+    @SuppressLint("CheckResult")
+    public void getCatalogue() {
+
+        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
+        bookDao.loadAll();
+
+        if (isOnline()) {
+
+            IBookInterface IBookInterface = setRetrofit().create(IBookInterface.class);
+            Observable<List<Book>> bookObservable = IBookInterface.getBooks();
+
+            bookObservable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map((Function<List<Book>, Object>) (List<Book> books) -> books)
+                    .subscribe(o -> {
+                        bookDao.insertOrReplaceInTx((Iterable<Book>) o);
+                    }, Timber::d);
+        } else {
+            view.notConnected();
+        }
+    }
+
+    public void setView() {
+        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
+        bookDao.loadAll();
+
+        if (!bookDao.queryBuilder().list().isEmpty()) {
+            view.showCatalogue(bookDao.queryBuilder().list());
+        } else {
+            view.showEmpty();
+        }
     }
 
     private Retrofit setRetrofit() {
@@ -65,7 +93,6 @@ public class HenriPotierActivity extends AppCompatActivity {
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Book.class, new BookDeserializer())
-                .registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer())
                 .create();
 
         return new Retrofit.Builder()
@@ -77,25 +104,24 @@ public class HenriPotierActivity extends AppCompatActivity {
     }
 
     protected boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    protected class NotConnectedAlertDialog extends AlertDialog{
-
-        public NotConnectedAlertDialog(@NonNull Context context) {
-            super(context);
-            setCancelable(false);
-
-            setTitle(getString(R.string.no_internet_connection));
-            setMessage(getString(R.string.message_not_connected));
-
-            setButton(BUTTON_POSITIVE, getString(R.string.ok), (dialog, which) -> {
-                dismiss();
-                onBackPressed();
-            });
-        }
+    public void clickOnBook(String isbn) {
+        view.onBookSelected(isbn);
     }
 
+    public interface View {
+
+        void showCatalogue(List<Book> bookList);
+
+        void showEmpty();
+
+        void onBookSelected(String isbn);
+
+        void notConnected();
+
+    }
 }

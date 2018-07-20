@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.cuiweiyou.numberpickerdialog.NumberPickerDialog;
@@ -41,7 +40,6 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
     Button buttonRemoveFromBasket;
 
     private BookPresenter bookPresenter;
-    private String bookIsbn;
     private NumberPickerDialog mNumberPickerDialog;
 
     @Override
@@ -54,19 +52,15 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
         ButterKnife.bind(this);
 
         if (getIntent().hasExtra(EXTRA_BOOK_ID)) {
-            bookIsbn = getIntent().getStringExtra(EXTRA_BOOK_ID);
+            bookPresenter.initBook(getIntent().getStringExtra(EXTRA_BOOK_ID));
         }
-
-        bookPresenter.getBook(bookIsbn);
     }
 
-    private NumberPicker.OnValueChangeListener initNumberPickerDialog() {
-        NumberPicker.OnValueChangeListener onValueChangeListener = (picker, oldVal, newVal) -> {
-            bookPresenter.editQuantityinBasket(bookIsbn, newVal);
-        };
-        return onValueChangeListener;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bookPresenter.getBook();
     }
-
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_basket, menu);
@@ -121,7 +115,17 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
 
     @Override
     public void showNumberPicker(String title, int quantity) {
-        mNumberPickerDialog = new NumberPickerDialog(BookActivity.this, title, initNumberPickerDialog(), 10, 1, quantity);
+        mNumberPickerDialog = new NumberPickerDialog(BookActivity.this,
+                title,
+                (picker, oldVal, newVal) -> {
+//                    basketNumberPickerPresenter.editQuantityinBasket(newVal);
+                    bookPresenter.editQuantityinBasket(newVal);
+
+
+                }, 10,
+                1,
+                quantity);
+
         mNumberPickerDialog.show();
     }
 
@@ -132,17 +136,16 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
 
     @OnClick(R.id.activity_book_add_to_basket)
     void clickAddToBasket() {
-        bookPresenter.addToBasket(bookIsbn);
+        bookPresenter.addToBasket();
     }
 
     @OnClick(R.id.activity_book_remove_from_basket_button)
     void clickRemoveFromBasket() {
-        bookPresenter.removeFromBasket(bookIsbn);
+        bookPresenter.removeFromBasket();
     }
 
     @OnClick(R.id.activity_book_edit_quantity_button)
     void clickEditQuantity() {
-        bookPresenter.initNumberPicker(bookIsbn);
+        bookPresenter.selectQuantityInBasket();
     }
-
 }

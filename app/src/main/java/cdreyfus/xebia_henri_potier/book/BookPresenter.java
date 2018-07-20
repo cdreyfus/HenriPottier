@@ -9,11 +9,20 @@ public class BookPresenter {
 
     private View view;
     private Context context;
+    private Book book;
+    private Basket basket;
 
     BookPresenter(View view, Context context) {
         this.view = view;
         this.context = context;
+        this.basket = Basket.getInstance();
     }
+
+    public void initBook(String isbn) {
+        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
+        this.book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
+    }
+
 
     private void setTitre(String titre) {
         view.setTitre(titre);
@@ -31,22 +40,19 @@ public class BookPresenter {
         view.setPrice(price);
     }
 
-    public void getBook(String isbn) {
-        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
-        Book book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
-        updateBook(book);
-        updateBasketButtons(book);
+    public void getBook() {
+        updateBook();
+        updateBasketButtons();
     }
 
-    private void updateBook(Book book) {
+    private void updateBook() {
         setTitre(book.getTitle());
         setCover(book.getCover());
         setSynopsis(book.getSynopsis());
         setPrice(book.getPrice());
     }
 
-    private void updateBasketButtons(Book book) {
-        Basket basket = Basket.getInstance();
+    private void updateBasketButtons() {
         if (basket.getBooksQuantitiesMap().containsKey(book)) {
             view.setBookInBasket(basket.getBooksQuantitiesMap().get(book));
         } else {
@@ -54,38 +60,24 @@ public class BookPresenter {
         }
     }
 
-    public void addToBasket(String isbn) {
-        Basket basket = Basket.getInstance();
-        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
-        Book book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
+    public void addToBasket() {
         basket.addBookToBasket(book);
         view.setBookInBasket(basket.getBooksQuantitiesMap().get(book));
     }
 
-    public void removeFromBasket(String isbn) {
-        Basket basket = Basket.getInstance();
-        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
-        Book book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
+    public void removeFromBasket() {
         basket.deleteBookFromBasket(book);
         view.setNotInBasket();
     }
 
-    public void initNumberPicker(String isbn) {
-        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
-        Book book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
-        view.showNumberPicker(book.getTitle(), Basket.getInstance().getBooksQuantitiesMap().get(book));
-
+    public void editQuantityinBasket(int newVal) {
+        basket.editQuantityBook(book, newVal);
+        view.setBookInBasket(newVal);
+        view.hideNumberPicker();
     }
 
-    public void editQuantityinBasket(String isbn, int newVal) {
-        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
-        Book book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
-
-        Basket basket = Basket.getInstance();
-        basket.editQuantityBook(book, newVal);
-
-        view.hideNumberPicker();
-        view.setBookInBasket(newVal);
+    public void selectQuantityInBasket(){
+        view.showNumberPicker(book.getTitle(), basket.getBooksQuantitiesMap().get(book));
     }
 
 

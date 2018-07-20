@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 import cdreyfus.xebia_henri_potier.BuildConfig;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferDeserializer;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 import cdreyfus.xebia_henri_potier.basket.promotion.ICommercialOfferApi;
 import cdreyfus.xebia_henri_potier.book.Book;
-import cdreyfus.xebia_henri_potier.models.deserializer.CommercialOfferDeserializer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -28,6 +28,7 @@ import timber.log.Timber;
 public class BasketPresenter {
 
     private Basket basket;
+    private Book book;
     private View view;
 
     public BasketPresenter(View view) {
@@ -68,6 +69,14 @@ public class BasketPresenter {
         }
     }
 
+    public void initBook(Book book){
+        this.book = book;
+    }
+
+    public void setNumberPicker(){
+        view.showNumberPicker(book.getTitle(), basket.getBooksQuantitiesMap().get(book));
+    }
+
     private Retrofit setRetrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Timber.tag("OkHttp").d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -97,6 +106,9 @@ public class BasketPresenter {
                 .build();
     }
 
+    public void editQuantityinBasket(int newVal) {
+        basket.editQuantityBook(book, newVal);
+    }
 
     public interface View {
 
@@ -109,6 +121,11 @@ public class BasketPresenter {
         void showBooks(LinkedHashMap<Book, Integer> listBooks);
 
         void showEmpty();
+
+        void showNumberPicker(String title, int quantity);
+
+        void hideNumberPicker();
+
     }
 
 }
