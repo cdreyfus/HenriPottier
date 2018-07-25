@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import cdreyfus.xebia_henri_potier.R;
-import cdreyfus.xebia_henri_potier.activity.CatalogueActivity;
+import cdreyfus.xebia_henri_potier.catalogue.CatalogueActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -33,5 +33,6 @@ public class BasketActivityTest {
         onView(withText("Total: 35.00 €")).check(matches(isDisplayed())); // Better is to set Total: in strings.xml so reference can be used
         onView(withText("Henri Potier à l'école des sorciers")).check(matches(isDisplayed()));
     }
+
 
 }

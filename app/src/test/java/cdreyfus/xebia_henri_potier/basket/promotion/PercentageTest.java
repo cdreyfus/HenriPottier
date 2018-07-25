@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.models;
+package cdreyfus.xebia_henri_potier.basket.promotion;
 
 import org.junit.Assert;
 import org.junit.Test;

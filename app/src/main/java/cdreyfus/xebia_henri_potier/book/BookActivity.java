@@ -118,9 +118,7 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
         mNumberPickerDialog = new NumberPickerDialog(BookActivity.this,
                 title,
                 (picker, oldVal, newVal) -> {
-//                    basketNumberPickerPresenter.editQuantityinBasket(newVal);
                     bookPresenter.editQuantityinBasket(newVal);
-
 
                 }, 10,
                 1,

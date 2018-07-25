@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.models.deserializer;
+package cdreyfus.xebia_henri_potier.basket.promotion;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;

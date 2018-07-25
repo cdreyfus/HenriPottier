@@ -1,4 +1,4 @@
-package cdreyfus.xebia_henri_potier.models;
+package cdreyfus.xebia_henri_potier.basket;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +20,7 @@ public class BasketTest {
     }
 
     @Test
-    public void testCreateBasket(){
+    public void getInstance(){
         Assert.assertEquals(0, basket.getBooksQuantitiesMap().size());
         Assert.assertEquals(0, basket.getRegularPrice(), 0.0);
     }
@@ -54,7 +54,7 @@ public class BasketTest {
     }
 
     @Test
-    public void testGetRegularPrice(){
+    public void getRegularPrice(){
         Book book1 = new Book();
         book1.setPrice(30);
         Book book2 = new Book();
@@ -68,7 +68,7 @@ public class BasketTest {
     }
 
     @Test
-    public void applyBestCommercialOffer1() {
+    public void applyBestCommercialOffer_1() {
         CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
         commercialOffersResponse.addOffer(new Slice(12, 100));
         commercialOffersResponse.addOffer(new Minus(15));
@@ -85,7 +85,7 @@ public class BasketTest {
     }
 
     @Test
-    public void applyBestCommercialOffer2() {
+    public void applyBestCommercialOffer_2() {
         CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
         commercialOffersResponse.addOffer(new Slice(12, 50));
         commercialOffersResponse.addOffer(new Minus(10));
@@ -103,7 +103,7 @@ public class BasketTest {
     }
 
     @Test
-    public void applyBestCommercialOffer3() {
+    public void applyBestCommercialOffer_3() {
         CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
         commercialOffersResponse.addOffer(new Slice(12, 100));
         commercialOffersResponse.addOffer(new Minus(15));
@@ -120,7 +120,7 @@ public class BasketTest {
     }
 
     @Test
-    public void getBooksPromotionCode(){
+    public void getPromotionCode(){
         Book book1 = new Book();
         book1.setIsbn("book1");
         Book book2 = new Book();
@@ -133,19 +133,11 @@ public class BasketTest {
         Assert.assertEquals("book1,book1,book2", basket.getPromotionCode());
     }
 
-//    @Test
-//    public void getPromotionValue(){
-//        Book book1 = new Book();
-//        book1.setPrice(30);
-//
-//        Book book2 = new Book();
-//        book2.setPrice(35);
-//
-//        CommercialOffersResponse commercialOffersResponse = new CommercialOffersResponse();
-//        commercialOffersResponse.addOffer(new Slice(12, 100));
-//        commercialOffersResponse.addOffer(new Minus(15));
-//        commercialOffersResponse.addOffer(new Percentage(5));
-//
-//        Assert.assertEquals(15, basket.getPromotionValue(commercialOffersResponse), 0);
-//    }
+    @Test
+    public void isEmpty() {
+    }
+
+    @Test
+    public void getBooksQuantitiesMap() {
+    }
 }
