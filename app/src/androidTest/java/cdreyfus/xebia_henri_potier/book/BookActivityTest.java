@@ -103,23 +103,23 @@ public class BookActivityTest {
         onView(withId(R.id.activity_book_edit_quantity_button)).perform(click());
 
 //        onData(is(instanceOf(String.class))).inAdapterView(allOf(withClassName(equalTo("com.cuiweiyou.numberpickerdialog.NumberPickerDialog")), isDisplayed())).atPosition(index).perform(click());
-        onView(withId(R.id.numberPicker)).inRoot(withClassName(equalTo("com.cuiweiyou.numberpickerdialog.NumberPickerDialog"))).
-        onView(withId(R.id.numberPicker)).perform(new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return ViewMatchers.isAssignableFrom(NumberPickerDialog.class);
-            }
-
-            @Override
-            public String getDescription() {
-                return "Set the value of a NumberPicker";
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                ((NumberPickerDialog)view).setCurrentValue(3);
-            }
-        });
+//        onView(withId(R.id.numberPicker)).inRoot(withClassName(equalTo("com.cuiweiyou.numberpickerdialog.NumberPickerDialog"))).
+//        onView(withId(R.id.numberPicker)).perform(new ViewAction() {
+//            @Override
+//            public Matcher<View> getConstraints() {
+//                return ViewMatchers.isAssignableFrom(NumberPickerDialog.class);
+//            }
+//
+//            @Override
+//            public String getDescription() {
+//                return "Set the value of a NumberPicker";
+//            }
+//
+//            @Override
+//            public void perform(UiController uiController, View view) {
+//                ((NumberPickerDialog)view).setCurrentValue(3);
+//            }
+//        });
 
         onView(withId(android.R.id.button1)).perform(click());
         onView(withText("Edit quantity (3)")).check(matches(isDisplayed()));
