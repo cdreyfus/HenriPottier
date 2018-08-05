@@ -1,84 +1,63 @@
 package cdreyfus.xebia_henri_potier.basket;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
+import java.util.HashMap;
+
 import cdreyfus.xebia_henri_potier.book.Book;
 
-public class Basket {
+public class Basket implements Parcelable {
 
-    private static Basket mInstance;
 
-    private LinkedHashMap<Book, Integer> booksQuantitiesMap;
+    private HashMap<Book, Integer> booksQuantitiesMap;
 
-    public static Basket getInstance() {
-        if (mInstance == null) {
-            mInstance = new Basket();
-        }
-        return mInstance;
+    public Basket(HashMap<Book, Integer> booksQuantitiesMap) {
+        this.booksQuantitiesMap = booksQuantitiesMap;
     }
 
-    public Basket() {
-        booksQuantitiesMap = new LinkedHashMap<>();
-    }
-
-    public boolean isEmpty(){
-        return booksQuantitiesMap.isEmpty();
-    }
-
-    public float getRegularPrice() {
-        float regularPrice = 0;
-        for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()) {
-            regularPrice += entry.getKey().getPrice() * entry.getValue();
-        }
-        return regularPrice;
-    }
-
-    public LinkedHashMap<Book, Integer> getBooksQuantitiesMap() {
+    public HashMap<Book, Integer> getBooksQuantitiesMap() {
         return booksQuantitiesMap;
     }
 
-    public void addBookToBasket(Book book) {
-        booksQuantitiesMap.put(book, 1);
+    public void setBooksQuantitiesMap(HashMap<Book, Integer> booksQuantitiesMap) {
+        this.booksQuantitiesMap = booksQuantitiesMap;
     }
 
-    public void deleteBookFromBasket(Book book) {
-        booksQuantitiesMap.remove(book);
-    }
 
-    public void editQuantityBook(Book book, int quantity) {
-        for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()) {
-            if (entry.getKey().equals(book)) {
-                entry.setValue(quantity);
-            }
+    protected Basket(Parcel in) {
+        booksQuantitiesMap = new HashMap<>();
+        int size = in.readInt();
+        for(int i = 0; i < size; i++){
+            Book book = (Book) in.readValue(Book.class.getClassLoader());
+            int value = in.readInt();
+            booksQuantitiesMap.put(book,value);
         }
     }
 
-//    public float getPromotionValue(CommercialOffersResponse commercialOffersResponse) {
-//        float regularPrice = getRegularPrice();
-//        return regularPrice - applyBestCommercialOffer(commercialOffersResponse, regularPrice);
-//    }
-
-
-    public float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice) {
-        float minimumValue = regularPrice;
-        for (CommercialOffer commercialOffer : commercialOffersResponse.getCommercialOffers()) {
-            minimumValue = Math.min(minimumValue, commercialOffer.applyOffer(regularPrice));
+    public static final Creator<Basket> CREATOR = new Creator<Basket>() {
+        @Override
+        public Basket createFromParcel(Parcel in) {
+            return new Basket(in);
         }
-        return minimumValue;
+
+        @Override
+        public Basket[] newArray(int size) {
+            return new Basket[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getPromotionCode() {
-        StringBuilder promotionCode = new StringBuilder();
-        for (Map.Entry<Book, Integer> entry : booksQuantitiesMap.entrySet()) {
-            for (int i = 0; i < entry.getValue(); i++) {
-                promotionCode.append(String.format("%s,", entry.getKey().getIsbn()));
-            }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(booksQuantitiesMap.size());
+        for(HashMap.Entry<Book,Integer> entry : booksQuantitiesMap.entrySet()){
+            dest.writeValue(entry.getKey());
+            dest.writeInt(entry.getValue());
         }
-        promotionCode = promotionCode.deleteCharAt(promotionCode.length() - 1);
-
-        return promotionCode.toString();
     }
 }

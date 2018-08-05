@@ -28,6 +28,7 @@ import timber.log.Timber;
 public class HenriPotierApplication extends Application{
 
     private DaoSession mDaoSession;
+    private Retrofit mRetrofit;
 
     @Override
     public void onCreate() {
@@ -42,10 +43,45 @@ public class HenriPotierApplication extends Application{
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "xebia_henri_potier-db");
         Database db = helper.getWritableDb();
         mDaoSession = new DaoMaster(db).newSession();
+
+        mRetrofit = setRetrofit();
     }
 
     public DaoSession getDaoSession() {
         return mDaoSession;
     }
 
+    private Retrofit setRetrofit() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Timber.tag("OkHttp").d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        if (BuildConfig.DEBUG) {
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        } else {
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        }
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .addNetworkInterceptor(new StethoInterceptor())
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer())
+                .registerTypeAdapter(Book.class, new BookDeserializer())
+                .create();
+
+        return new Retrofit.Builder()
+                .baseUrl("http://henri-potier.xebia.fr/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(okHttpClient)
+                .build();
+    }
+
+    public Retrofit getRetrofit(){
+        return mRetrofit;
+    }
 }

@@ -2,6 +2,8 @@ package cdreyfus.xebia_henri_potier.book;
 
 import android.content.Context;
 
+import java.util.Map;
+
 import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.basket.Basket;
 
@@ -15,12 +17,15 @@ public class BookPresenter {
     BookPresenter(View view, Context context) {
         this.view = view;
         this.context = context;
-        this.basket = Basket.getInstance();
     }
 
     public void initBook(String isbn) {
         BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
         this.book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
+    }
+
+    public void initBasket(Basket mBasket) {
+        this.basket = mBasket;
     }
 
 
@@ -61,17 +66,21 @@ public class BookPresenter {
     }
 
     public void addToBasket() {
-        basket.addBookToBasket(book);
+        basket.getBooksQuantitiesMap().put(book, 1);
         view.setBookInBasket(basket.getBooksQuantitiesMap().get(book));
     }
 
     public void removeFromBasket() {
-        basket.deleteBookFromBasket(book);
+        basket.getBooksQuantitiesMap().remove(book);
         view.setNotInBasket();
     }
 
     public void editQuantityinBasket(int newVal) {
-        basket.editQuantityBook(book, newVal);
+        for (Map.Entry<Book, Integer> entry : basket.getBooksQuantitiesMap().entrySet()) {
+            if (entry.getKey().equals(book)) {
+                entry.setValue(newVal);
+            }
+        }
         view.setBookInBasket(newVal);
         view.hideNumberPicker();
     }

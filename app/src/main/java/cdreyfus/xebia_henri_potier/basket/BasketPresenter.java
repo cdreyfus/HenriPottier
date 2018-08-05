@@ -1,28 +1,19 @@
 package cdreyfus.xebia_henri_potier.basket;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.LinkedHashMap;
-import java.util.concurrent.TimeUnit;
-
-import cdreyfus.xebia_henri_potier.BuildConfig;
+import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferDeserializer;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 import cdreyfus.xebia_henri_potier.basket.promotion.ICommercialOfferApi;
 import cdreyfus.xebia_henri_potier.book.Book;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 public class BasketPresenter {
@@ -31,26 +22,55 @@ public class BasketPresenter {
     private Book book;
     private View view;
 
-    public BasketPresenter(View view) {
+    private Context context;
+
+    public BasketPresenter(View view, Context context) {
         this.view = view;
-        basket = Basket.getInstance();
+        this.context = context;
+        this.basket = new Basket(new HashMap<>());
+    }
+
+    public void setBasket(Basket basket){
+        this.basket = basket;
+    }
+
+    private String generatePromoCode(Map<Book, Integer> map){
+        StringBuilder promotionCode = new StringBuilder();
+        for (Map.Entry<Book, Integer> entry : map.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                promotionCode.append(String.format("%s,", entry.getKey().getIsbn()));
+            }
+        }
+        promotionCode = promotionCode.deleteCharAt(promotionCode.length() - 1);
+        return promotionCode.toString();
+    }
+
+    private float calculateRegularPrice(Map<Book, Integer> map) {
+        float regularPrice = 0;
+        for (Map.Entry<Book, Integer> entry : map.entrySet()) {
+            regularPrice += entry.getKey().getPrice() * entry.getValue();
+        }
+        return regularPrice;
     }
 
     @SuppressLint("CheckResult")
     public void setPrices() {
 
-        float regularPrice = basket.getRegularPrice();
+        float regularPrice = calculateRegularPrice(basket.getBooksQuantitiesMap());
+        String promoCode = generatePromoCode(basket.getBooksQuantitiesMap());
+
+
         view.setRegularPrice(regularPrice);
 
-        if (!basket.isEmpty()) {
-            ICommercialOfferApi commercialOfferInterface = setRetrofit().create(ICommercialOfferApi.class);
+        if (!basket.getBooksQuantitiesMap().isEmpty()) {
+            ICommercialOfferApi commercialOfferInterface = ((HenriPotierApplication) context).getRetrofit().create(ICommercialOfferApi.class);
 
-            Single<CommercialOffersResponse> singleCommercialOffer = commercialOfferInterface.getCommercialOffer(basket.getPromotionCode());
+            Single<CommercialOffersResponse> singleCommercialOffer = commercialOfferInterface.getCommercialOffer(promoCode);
 
             singleCommercialOffer.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(commercialOffersResponse -> {
-                        float finalPrice = basket.applyBestCommercialOffer(commercialOffersResponse, regularPrice);
+                        float finalPrice = applyBestCommercialOffer(commercialOffersResponse, regularPrice);
                         view.setFinalPrice(finalPrice);
                         view.setPromoValue(finalPrice - regularPrice);
 
@@ -62,7 +82,7 @@ public class BasketPresenter {
     }
 
     public void updateBasketContent() {
-        if (basket.isEmpty()) {
+        if (basket.getBooksQuantitiesMap().isEmpty()) {
             view.showEmpty();
         } else {
             view.showBooks(basket.getBooksQuantitiesMap());
@@ -77,37 +97,21 @@ public class BasketPresenter {
         view.showNumberPicker(book.getTitle(), basket.getBooksQuantitiesMap().get(book));
     }
 
-    private Retrofit setRetrofit() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Timber.tag("OkHttp").d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        if (BuildConfig.DEBUG) {
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        } else {
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+    public void editQuantityBook(int quantity) {
+        for (Map.Entry<Book, Integer> entry : basket.getBooksQuantitiesMap().entrySet()) {
+            if (entry.getKey().equals(book)) {
+                entry.setValue(quantity);
+            }
         }
-
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(logging)
-                .addNetworkInterceptor(new StethoInterceptor())
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .build();
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(CommercialOffer.class, new CommercialOfferDeserializer())
-                .create();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://henri-potier.xebia.fr/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(okHttpClient)
-                .build();
     }
 
-    public void editQuantityinBasket(int newVal) {
-        basket.editQuantityBook(book, newVal);
+    public float applyBestCommercialOffer(CommercialOffersResponse commercialOffersResponse, float regularPrice) {
+        float minimumValue = regularPrice;
+        for (CommercialOffer commercialOffer : commercialOffersResponse.getCommercialOffers()) {
+            minimumValue = Math.min(minimumValue, commercialOffer.applyOffer(regularPrice));
+        }
+        return minimumValue;
     }
 
     public interface View {
@@ -118,7 +122,7 @@ public class BasketPresenter {
 
         void setPromoValue(float promoValue);
 
-        void showBooks(LinkedHashMap<Book, Integer> listBooks);
+        void showBooks(HashMap<Book, Integer> listBooks);
 
         void showEmpty();
 

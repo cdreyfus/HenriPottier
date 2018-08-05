@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.cuiweiyou.numberpickerdialog.NumberPickerDialog;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -17,6 +17,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.book.Book;
+
+import static cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_BOOK_ID;
+import static cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_LIST_BOOKS;
 
 public class BasketActivity extends AppCompatActivity implements BasketPresenter.View {
 
@@ -35,14 +38,24 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
     private BasketRecyclerAdapter basketAdapter;
     private NumberPickerDialog numberPickerDialog;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basket);
         ButterKnife.bind(this);
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.basket);
+        basketPresenter = new BasketPresenter(this, getApplicationContext());
 
-        basketPresenter = new BasketPresenter(this);
+        if (getIntent().hasExtra(EXTRA_LIST_BOOKS)){
+//            Basket basket = getIntent().getParcelableExtra(EXTRA_BOOK_ID);
+            Basket basket = (Basket) getIntent().getExtras().get(EXTRA_LIST_BOOKS);
+
+
+
+            basketPresenter.setBasket(basket);
+        }
+
         basketAdapter = new BasketRecyclerAdapter(basketPresenter);
         initRecycler();
 
@@ -53,6 +66,11 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
         super.onResume();
         basketPresenter.updateBasketContent();
         basketPresenter.setPrices();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     private void initRecycler() {
@@ -77,8 +95,8 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
 
 
     @Override
-    public void showBooks(LinkedHashMap<Book, Integer> linkedHashMap) {
-        basketAdapter.addAll(linkedHashMap);
+    public void showBooks(HashMap<Book, Integer> hashMap) {
+        basketAdapter.addAll(hashMap);
         basketAdapter.notifyDataSetChanged();
 
         mEmptyBasket.setVisibility(View.GONE);
@@ -96,7 +114,7 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
         numberPickerDialog = new NumberPickerDialog(this,
                 title,
                 (picker, oldVal, newVal) -> {
-                    basketPresenter.editQuantityinBasket(newVal);
+                    basketPresenter.editQuantityBook(newVal);
                     basketPresenter.updateBasketContent();
                     basketPresenter.setPrices();
                 }, 10,

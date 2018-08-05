@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.book.Book;
@@ -15,11 +15,11 @@ import cdreyfus.xebia_henri_potier.book.Book;
 
 public class BasketRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private LinkedHashMap<Book, Integer> bookIntegerLinkedHashMap;
+    private HashMap<Book, Integer> bookIntegerLinkedHashMap;
     private BasketPresenter basketPresenter;
 
     public BasketRecyclerAdapter(BasketPresenter basketPresenter) {
-        bookIntegerLinkedHashMap = new LinkedHashMap<>();
+        bookIntegerLinkedHashMap = new HashMap<>();
         this.basketPresenter = basketPresenter;
     }
 
@@ -51,7 +51,7 @@ public class BasketRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return bookIntegerLinkedHashMap.size();
     }
 
-    public void addAll(LinkedHashMap<Book, Integer> collection) {
+    public void addAll(HashMap<Book, Integer> collection) {
         bookIntegerLinkedHashMap.putAll(collection);
     }
 

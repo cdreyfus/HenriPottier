@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import cdreyfus.xebia_henri_potier.basket.Basket;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
 import cdreyfus.xebia_henri_potier.basket.promotion.Minus;
 import cdreyfus.xebia_henri_potier.basket.promotion.Percentage;
@@ -16,7 +15,7 @@ public class BasketTest {
     private Basket basket;
     @Before
     public void setUp() {
-        basket = new Basket();
+        basket = new Basket(booksQuantitiesMap);
     }
 
     @Test
