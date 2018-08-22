@@ -21,7 +21,7 @@ public class BookTest {
         book.writeToParcel(parcel, book.describeContents());
         parcel.setDataPosition(0);
 
-        Book createdFromParcel = Book.CREATOR.createFromParcel(parcel);
+        Book createdFromParcel = Book.Companion.getCREATOR().createFromParcel(parcel);
         assertThat(createdFromParcel.getIsbn(), is("c8fabf68-8374-48fe-a7ea-a00ccd07afff"));
         assertThat(createdFromParcel.getTitle(), is("Henri Potier à l'école des sorciers"));
         assertThat(createdFromParcel.getPrice(), is(35));

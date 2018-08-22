@@ -20,8 +20,8 @@ public class BookPresenter {
     }
 
     public void initBook(String isbn) {
-        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
-        this.book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
+//        BookDao bookDao = ((HenriPotierApplication) context).getDaoSession().getBookDao();
+//        this.book = bookDao.queryBuilder().where(BookDao.Properties.Isbn.eq(isbn)).build().unique();
     }
 
     public void initBasket(Basket mBasket) {

@@ -27,7 +27,7 @@ public class BasketTest {
     @Test
     public void addBookToBasket() {
         Book book = new Book();
-        book.setPrice(30);
+        book.setPrice(30);/home/cdreyfus/Projets/Xebia_Henri_Potier/GitProjects/android-using-kotlin/MyAddressBook-starter
         basket.addBookToBasket(book);
 
         Assert.assertEquals(1, basket.getBooksQuantitiesMap().get(book).intValue());

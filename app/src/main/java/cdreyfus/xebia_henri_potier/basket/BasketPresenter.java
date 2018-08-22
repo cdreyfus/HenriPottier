@@ -63,7 +63,7 @@ public class BasketPresenter {
         view.setRegularPrice(regularPrice);
 
         if (!basket.getBooksQuantitiesMap().isEmpty()) {
-            ICommercialOfferApi commercialOfferInterface = ((HenriPotierApplication) context).getRetrofit().create(ICommercialOfferApi.class);
+            ICommercialOfferApi commercialOfferInterface = HenriPotierApplication.Companion.createCommercialOffferApi();
 
             Single<CommercialOffersResponse> singleCommercialOffer = commercialOfferInterface.getCommercialOffer(promoCode);
 
