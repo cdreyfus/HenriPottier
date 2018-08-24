@@ -1,5 +1,6 @@
 package cdreyfus.xebia_henri_potier.book;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.cuiweiyou.numberpickerdialog.NumberPickerDialog;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -23,9 +25,7 @@ import butterknife.OnClick;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.basket.Basket;
 import cdreyfus.xebia_henri_potier.basket.BasketActivity;
-
-import static cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_BOOK_ID;
-import static cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_LIST_BOOKS;
+import cdreyfus.xebia_henri_potier.utils.Utils;
 
 public class BookActivity extends AppCompatActivity implements BookPresenter.View {
 
@@ -51,17 +51,17 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.bookPresenter = new BookPresenter(this, getApplicationContext());
+        this.bookPresenter = new BookPresenter(this, getSharedPreferences(Utils.INSTANCE.getSHARED_PREFS(), Context.MODE_PRIVATE));
 
         setContentView(R.layout.activity_book);
         ButterKnife.bind(this);
 
-        if (getIntent().hasExtra(EXTRA_BOOK_ID)) {
-            bookPresenter.initBook(getIntent().getStringExtra(EXTRA_BOOK_ID));
+        if (getIntent().hasExtra(Utils.INSTANCE.getEXTRA_BOOK_ID())) {
+            bookPresenter.initBook(getIntent().getStringExtra(Utils.INSTANCE.getEXTRA_BOOK_ID()));
         }
 
-        if (getIntent().hasExtra(EXTRA_LIST_BOOKS)){
-            mBasket = getIntent().getParcelableExtra(EXTRA_LIST_BOOKS);
+        if (getIntent().hasExtra(Utils.INSTANCE.getEXTRA_LIST_BOOKS())){
+            mBasket = getIntent().getParcelableExtra(Utils.INSTANCE.getEXTRA_LIST_BOOKS());
         } else {
             mBasket = new Basket(new HashMap<>());
         }
@@ -84,7 +84,7 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
             case R.id.action_basket:
                 Intent goToBasket = new Intent(BookActivity.this, BasketActivity.class);
                 if(!mBasket.getBooksQuantitiesMap().isEmpty()) {
-                    goToBasket.putExtra(EXTRA_LIST_BOOKS, mBasket);
+                    goToBasket.putExtra(Utils.INSTANCE.getEXTRA_LIST_BOOKS(), mBasket);
                 }
                 startActivity(goToBasket);
                 return true;
@@ -103,12 +103,17 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
     }
 
     @Override
-    public void setResume(String resume) {
-        bookSynopsis.setText(resume);
+    public void setResume(@org.jetbrains.annotations.Nullable ArrayList<String> resume) {
+        StringBuilder synopsis = new StringBuilder();
+        for (String part : resume) {
+            synopsis.append(part).append("\n");
+        }
+        String fomatedResume = synopsis.substring(0, synopsis.lastIndexOf("\n"));
+        bookSynopsis.setText(fomatedResume);
     }
 
     @Override
-    public void setPrice(float price) {
+    public void setPrice(@Nullable Float price) {
         bookPrice.setText(String.format("%s €", price));
     }
 
@@ -161,4 +166,6 @@ public class BookActivity extends AppCompatActivity implements BookPresenter.Vie
     void clickEditQuantity() {
         bookPresenter.selectQuantityInBasket();
     }
+
+
 }

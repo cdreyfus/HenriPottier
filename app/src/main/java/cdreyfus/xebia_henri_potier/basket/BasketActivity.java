@@ -17,9 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cdreyfus.xebia_henri_potier.R;
 import cdreyfus.xebia_henri_potier.book.Book;
-
-import static cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_BOOK_ID;
-import static cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_LIST_BOOKS;
+import cdreyfus.xebia_henri_potier.utils.Utils;
 
 public class BasketActivity extends AppCompatActivity implements BasketPresenter.View {
 
@@ -47,9 +45,9 @@ public class BasketActivity extends AppCompatActivity implements BasketPresenter
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.basket);
         basketPresenter = new BasketPresenter(this, getApplicationContext());
 
-        if (getIntent().hasExtra(EXTRA_LIST_BOOKS)){
+        if (getIntent().hasExtra(Utils.INSTANCE.getEXTRA_LIST_BOOKS())){
 //            Basket basket = getIntent().getParcelableExtra(EXTRA_BOOK_ID);
-            Basket basket = (Basket) getIntent().getExtras().get(EXTRA_LIST_BOOKS);
+            Basket basket = (Basket) getIntent().getExtras().get(Utils.INSTANCE.getEXTRA_LIST_BOOKS());
 
 
 

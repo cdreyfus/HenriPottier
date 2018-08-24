@@ -11,16 +11,13 @@ import cdreyfus.xebia_henri_potier.book.Book
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_catalogue_view.view.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CatalogueAdapter internal constructor(
         private val cataloguePresenter: CataloguePresenter) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val bookList: MutableList<Book>
-
-    init {
-        bookList = ArrayList()
-    }
+    private val bookList: MutableList<Book> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

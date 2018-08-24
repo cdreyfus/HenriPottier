@@ -4,7 +4,7 @@ import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public interface ICommercialOfferApi {
+public interface CommercialOfferApi {
 
 
     @GET("books/{list_books}/commercialOffers")

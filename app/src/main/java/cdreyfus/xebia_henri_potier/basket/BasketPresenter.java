@@ -9,7 +9,7 @@ import java.util.Map;
 import cdreyfus.xebia_henri_potier.HenriPotierApplication;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer;
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse;
-import cdreyfus.xebia_henri_potier.basket.promotion.ICommercialOfferApi;
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferApi;
 import cdreyfus.xebia_henri_potier.book.Book;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -63,7 +63,7 @@ public class BasketPresenter {
         view.setRegularPrice(regularPrice);
 
         if (!basket.getBooksQuantitiesMap().isEmpty()) {
-            ICommercialOfferApi commercialOfferInterface = HenriPotierApplication.Companion.createCommercialOffferApi();
+            CommercialOfferApi commercialOfferInterface = HenriPotierApplication.Companion.createCommercialOffferApi();
 
             Single<CommercialOffersResponse> singleCommercialOffer = commercialOfferInterface.getCommercialOffer(promoCode);
 

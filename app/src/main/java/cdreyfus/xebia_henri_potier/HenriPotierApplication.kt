@@ -1,12 +1,11 @@
 package cdreyfus.xebia_henri_potier
 
 import android.app.Application
+import android.content.Context
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferApi
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferDeserializer
-import cdreyfus.xebia_henri_potier.basket.promotion.ICommercialOfferApi
-import cdreyfus.xebia_henri_potier.book.Book
-import cdreyfus.xebia_henri_potier.book.BookDeserializer
-import cdreyfus.xebia_henri_potier.book.IBookApi
+import cdreyfus.xebia_henri_potier.book.BookApi
 import cdreyfus.xebia_henri_potier.logs.FileLoggingTree
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
@@ -23,6 +22,7 @@ import java.util.concurrent.TimeUnit
 
 class HenriPotierApplication : Application() {
 
+
     override fun onCreate() {
         super.onCreate()
         Stetho.initializeWithDefaults(this)
@@ -33,16 +33,14 @@ class HenriPotierApplication : Application() {
         Timber.plant(FileLoggingTree(applicationContext))
     }
 
-
     companion object {
-        val CATALOGUE: String = "CATALOGUE_HENRI_POTIER"
 
-        fun createBookApi(): IBookApi {
-            return setRetrofit().create(IBookApi::class.java)
+        fun createBookApi(): BookApi {
+            return setRetrofit().create(BookApi::class.java)
         }
 
-        fun createCommercialOffferApi(): ICommercialOfferApi {
-            return setRetrofit().create(ICommercialOfferApi::class.java)
+        fun createCommercialOffferApi(): CommercialOfferApi {
+            return setRetrofit().create(CommercialOfferApi::class.java)
         }
 
         fun setRetrofit(): Retrofit {
@@ -67,7 +65,6 @@ class HenriPotierApplication : Application() {
 
             val gson = GsonBuilder()
                     .registerTypeAdapter(CommercialOffer::class.java, CommercialOfferDeserializer())
-                    .registerTypeAdapter(Book::class.java, BookDeserializer())
                     .create()
 
             return Retrofit.Builder()

@@ -1,35 +1,31 @@
 package cdreyfus.xebia_henri_potier.catalogue
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.SharedPreferences
 import cdreyfus.xebia_henri_potier.HenriPotierApplication
 import cdreyfus.xebia_henri_potier.book.Book
-import cdreyfus.xebia_henri_potier.book.IBookApi
+import cdreyfus.xebia_henri_potier.book.BookApi
+import cdreyfus.xebia_henri_potier.loadCatalogue
+import cdreyfus.xebia_henri_potier.utils.Utils
 import com.google.gson.Gson
+import org.json.JSONArray
+import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
 
-class CataloguePresenter(private val view: View, private val context: Context) {
 
-    private var mPrefs: SharedPreferences = context.getSharedPreferences("HenriPotierSharedPrefs", Context.MODE_PRIVATE)
+class CataloguePresenter(private val view: View, private val sharedPrefs: SharedPreferences) {
 
-    private fun loadCatalogue(): java.util.ArrayList<Book> {
-        val contactSet = mPrefs.getStringSet(HenriPotierApplication.CATALOGUE, HashSet())
-        return contactSet.mapTo(java.util.ArrayList()) { Gson().fromJson(it, Book::class.java) }
-    }
-
-    private fun saveCatalogue(books: ArrayList<Book>) {
-        val editor = mPrefs.edit()
+    private fun saveCatalogue(books: ArrayList<Book>?) {
+        val editor = sharedPrefs.edit()
         editor.clear()
-        val bookSet = books
+        val bookSet = books!!
                 .map { Gson().toJson(it) }
-                .toSet()
-        editor.putStringSet(HenriPotierApplication.CATALOGUE, bookSet)
+                .toHashSet()
+        editor.putStringSet(Utils.CATALOGUE, bookSet)
         editor.apply()
     }
 
@@ -37,29 +33,52 @@ class CataloguePresenter(private val view: View, private val context: Context) {
     @SuppressLint("CheckResult")
     fun getCatalogue() {
 
-        val mBookApi: IBookApi = HenriPotierApplication.createBookApi()
-
+        val mBookApi: BookApi = HenriPotierApplication.createBookApi()
         val catalogueRequest = mBookApi.books
         catalogueRequest.enqueue(object : Callback<ArrayList<Book>> {
             override fun onFailure(call: Call<ArrayList<Book>>, t: Throwable) {
                 Timber.d(t.localizedMessage)
+                generateBooks()
             }
 
             override fun onResponse(call: Call<ArrayList<Book>>, response: Response<ArrayList<Book>>) {
                 val books: ArrayList<Book>? = response.body()
-                if (books != null) {
+                if (books != null)
+                    for(book in books){
+                        book.order = books.indexOf(book)+1
+                    }
                     saveCatalogue(books)
                 }
-            }
         })
     }
 
+    private fun generateBooks() {
+        val booksString = view.readContactJsonFile()
+        val list: ArrayList<Book> = arrayListOf()
+        try {
+            val booksJson = JSONArray(booksString)
+            for (i in 0 until booksJson.length()) {
+                val bookJson = booksJson.getJSONObject(i)
+                val bookString = bookJson.toString()
+
+                val book: Book = Gson().fromJson(bookString, Book::class.java)
+                book.order = i+1
+                list.add(book)
+            }
+            saveCatalogue(list)
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+    }
+
     fun setView() {
-        var listBooks: ArrayList<Book> = loadCatalogue()
+        val listBooks: List<Book> = loadCatalogue(sharedPrefs).sortedBy { it.order }
         if (!listBooks.isEmpty()) {
-            view.showCatalogue(listBooks);
+            view.showCatalogue(listBooks)
         } else {
-            view.showEmpty();
+            view.showEmpty()
         }
     }
 
@@ -76,6 +95,8 @@ class CataloguePresenter(private val view: View, private val context: Context) {
         fun onBookSelected(isbn: String)
 
         fun notConnected()
+
+        fun readContactJsonFile(): String?
 
     }
 }
