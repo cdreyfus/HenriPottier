@@ -12,7 +12,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import butterknife.ButterKnife
 import cdreyfus.xebia_henri_potier.R
 import cdreyfus.xebia_henri_potier.basket.BasketActivity
 import cdreyfus.xebia_henri_potier.book.Book
@@ -31,7 +30,6 @@ class CatalogueActivity : AppCompatActivity(), CataloguePresenter.View, SwipeRef
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_catalogue)
-        ButterKnife.bind(this)
 
         supportActionBar?.setTitle(R.string.catalogue)
 
@@ -41,7 +39,7 @@ class CatalogueActivity : AppCompatActivity(), CataloguePresenter.View, SwipeRef
         cataloguePresenter = CataloguePresenter(this, getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE))
 
 
-        catalogueAdapter = CatalogueAdapter(cataloguePresenter!!)
+        catalogueAdapter = CatalogueAdapter(cataloguePresenter, this)
         activity_catalogue_list.adapter = catalogueAdapter
     }
 
@@ -81,7 +79,6 @@ class CatalogueActivity : AppCompatActivity(), CataloguePresenter.View, SwipeRef
     override fun showCatalogue(bookList: List<Book>) {
         activity_catalogue_refresh?.apply { isRefreshing = false }
 
-
         catalogueAdapter?.addAll(bookList)
         catalogueAdapter?.notifyDataSetChanged()
         activity_catalogue_empty_db.visibility = GONE
@@ -102,7 +99,7 @@ class CatalogueActivity : AppCompatActivity(), CataloguePresenter.View, SwipeRef
         NotConnectedAlertDialog(this@CatalogueActivity).show()
     }
 
-    protected inner class NotConnectedAlertDialog internal constructor(context: Context) : AlertDialog(context) {
+    inner class NotConnectedAlertDialog internal constructor(context: Context) : AlertDialog(context) {
 
         init {
             setCancelable(false)

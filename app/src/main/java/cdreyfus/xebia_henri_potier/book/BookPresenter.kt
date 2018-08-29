@@ -6,7 +6,7 @@ import cdreyfus.xebia_henri_potier.loadCatalogue
 
 class BookPresenter internal constructor(private val view: View, private val sharedPreferences: SharedPreferences) {
     private var book: Book? = null
-    private lateinit var basket: Basket
+    private var basket: Basket = Basket()
 
     fun initBook(isbn: String) {
         val catalogue: ArrayList<Book> = loadCatalogue(sharedPreferences)
@@ -17,10 +17,9 @@ class BookPresenter internal constructor(private val view: View, private val sha
         }
     }
 
-    fun initBasket(mBasket: Basket) {
-        this.basket = mBasket
-    }
-
+//    fun initBasket(mBasket: Basket) {
+//        this.basket = mBasket
+//    }
 
     private fun setTitre(titre: String?) {
         view.setTitre(titre)
@@ -52,35 +51,36 @@ class BookPresenter internal constructor(private val view: View, private val sha
 
     private fun updateBasketButtons() {
         if (basket.booksQuantitiesMap.containsKey(book)) {
-//            view.setBookInBasket(basket.booksQuantitiesMap[book])
+            view.setBookInBasket(basket.booksQuantitiesMap[book])
         } else {
             view.setNotInBasket()
         }
     }
-
-    fun addToBasket() {
-        basket.booksQuantitiesMap[book] = 1
+//
+//    fun addToBasket() {
+//        basket.booksQuantitiesMap.put(book?,1)
 //        view.setBookInBasket(basket.booksQuantitiesMap[book])
-    }
+//
+//    }
 
-    fun removeFromBasket() {
-        basket!!.booksQuantitiesMap.remove(book)
-        view.setNotInBasket()
-    }
+//    fun removeFromBasket() {
+//        basket?.booksQuantitiesMap.remove(book)
+//        view.setNotInBasket()
+//    }
 
-    fun editQuantityinBasket(newVal: Int) {
-        for (entry in basket.booksQuantitiesMap.entries) {
-            if (entry.key == book) {
-                entry.setValue(newVal)
-            }
-        }
-        view.setBookInBasket(newVal)
-        view.hideNumberPicker()
-    }
+//    fun editQuantityinBasket(newVal: Int) {
+//        for (entry in basket.booksQuantitiesMap.entries) {
+//            if (entry.key == book) {
+//                entry.setValue(newVal)
+//            }
+//        }
+//        view.setBookInBasket(newVal)
+//        view.hideNumberPicker()
+//    }
 
-    fun selectQuantityInBasket() {
-//        view.showNumberPicker(book.title, basket.booksQuantitiesMap[book])
-    }
+//    fun selectQuantityInBasket() {
+//        view.showNumberPicker(book?.title, basket.booksQuantitiesMap.get(book))
+//    }
 
 
     interface View {
@@ -93,13 +93,9 @@ class BookPresenter internal constructor(private val view: View, private val sha
 
         fun setPrice(price: Float?)
 
-        fun setBookInBasket(quantity: Int)
+        fun setBookInBasket(quantity: Int?)
 
         fun setNotInBasket()
-
-        fun showNumberPicker(title: String, quantity: Int)
-
-        fun hideNumberPicker()
     }
 
 }

@@ -1,21 +1,22 @@
 package cdreyfus.xebia_henri_potier.catalogue
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import cdreyfus.xebia_henri_potier.HenriPotierApplication
 import cdreyfus.xebia_henri_potier.R.layout.item_catalogue_view
 import cdreyfus.xebia_henri_potier.book.Book
+import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_catalogue_view.view.*
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class CatalogueAdapter internal constructor(
-        private val cataloguePresenter: CataloguePresenter) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        val cataloguePresenter: CataloguePresenter?, val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val bookList: MutableList<Book> = ArrayList()
 
@@ -48,11 +49,13 @@ class CatalogueAdapter internal constructor(
         var itemPrice: TextView = itemView.catalogue_item_price
 
         fun setUpItem(book: Book) {
-            Picasso.get().load(book.cover).into(imageView)
+
+            val picasso: Picasso? = Picasso.Builder(context).downloader(OkHttp3Downloader(HenriPotierApplication.setHttpClient())).build()
+            picasso?.load(book.cover)?.into(imageView)
             itemLabel.text = book.title
             itemPrice.text = String.format("%s €", book.price)
 
-            itemView.setOnClickListener { v -> cataloguePresenter.clickOnBook(book.isbn) }
+            itemView.setOnClickListener { cataloguePresenter?.clickOnBook(book.isbn) }
         }
     }
 }

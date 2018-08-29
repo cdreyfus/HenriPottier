@@ -1,7 +1,7 @@
 package cdreyfus.xebia_henri_potier
 
 import android.app.Application
-import android.content.Context
+import cdreyfus.xebia_henri_potier.basket.Basket
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferApi
 import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferDeserializer
@@ -35,6 +35,8 @@ class HenriPotierApplication : Application() {
 
     companion object {
 
+        var basket: Basket? = null
+
         fun createBookApi(): BookApi {
             return setRetrofit().create(BookApi::class.java)
         }
@@ -44,6 +46,20 @@ class HenriPotierApplication : Application() {
         }
 
         fun setRetrofit(): Retrofit {
+            val gson = GsonBuilder()
+                    .registerTypeAdapter(CommercialOffer::class.java, CommercialOfferDeserializer())
+                    .create()
+
+            return Retrofit.Builder()
+                    .baseUrl("http://henri-potier.xebia.fr/")
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .client(setHttpClient())
+                    .build()
+        }
+
+        fun setHttpClient(): OkHttpClient {
+
             val logging = HttpLoggingInterceptor { message -> Timber.tag("OkHttp").d(message) }.setLevel(HttpLoggingInterceptor.Level.BODY)
 
             if (BuildConfig.DEBUG) {
@@ -58,23 +74,9 @@ class HenriPotierApplication : Application() {
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(10, TimeUnit.SECONDS)
-                    .connectionSpecs(Arrays.asList(
-                            ConnectionSpec.MODERN_TLS,
-                            ConnectionSpec.COMPATIBLE_TLS))
-                    .build()
-
-            val gson = GsonBuilder()
-                    .registerTypeAdapter(CommercialOffer::class.java, CommercialOfferDeserializer())
-                    .create()
-
-            return Retrofit.Builder()
-                    .baseUrl("http://henri-potier.xebia.fr/")
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .client(okHttpClient)
-                    .build()
+                    .connectionSpecs(Arrays.asList(ConnectionSpec.MODERN_TLS, ConnectionSpec.CLEARTEXT))
+            return okHttpClient.build()
         }
-
     }
 
 
