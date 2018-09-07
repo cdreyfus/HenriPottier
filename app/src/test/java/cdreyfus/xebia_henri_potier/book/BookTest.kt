@@ -2,11 +2,10 @@ package cdreyfus.xebia_henri_potier.book
 
 import android.os.Parcel
 import com.google.gson.Gson
-import org.hamcrest.core.Is.`is`
-import org.junit.Assert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+
 
 @RunWith(RobolectricTestRunner::class)
 class BookTest {
@@ -40,15 +39,13 @@ class BookTest {
         val book: Book = Gson().fromJson(bookString, Book::class.java)
         book.order = 1
 
-
         val parcel = Parcel.obtain()
-        book.writeToParcel(parcel, book.describeContents())
+        book.writeToParcel(parcel, 0)
         parcel.setDataPosition(0)
-        val createdFromParcel = Book.createFromParcel(parcel)
 
+        val fromParcel = Book.createFromParcel(parcel)
 
-        assertThat(createdFromParcel.isbn, `is`("c8fabf68-8374-48fe-a7ea-a00ccd07afff"))
-        assertThat(createdFromParcel.title, `is`("Henri Potier à l'école des sorciers"))
-        assertThat(createdFromParcel.price, `is`(35))
+        assert(fromParcel == book)
+
     }
 }
