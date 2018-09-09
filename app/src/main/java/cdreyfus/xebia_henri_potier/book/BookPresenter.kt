@@ -1,101 +1,114 @@
 package cdreyfus.xebia_henri_potier.book
 
-import android.content.SharedPreferences
+import android.content.Intent
 import cdreyfus.xebia_henri_potier.basket.Basket
-import cdreyfus.xebia_henri_potier.loadCatalogue
+import cdreyfus.xebia_henri_potier.utils.Utils
 
-class BookPresenter internal constructor(private val view: View, private val sharedPreferences: SharedPreferences) {
-    private var book: Book? = null
+class BookPresenter internal constructor() {
     private var basket: Basket = Basket()
+    private var view: View? = null
+    private var book:Book = Book()
 
-    fun initBook(isbn: String) {
-        val catalogue: ArrayList<Book> = loadCatalogue(sharedPreferences)
-        for(item in catalogue){
-            if(item.isbn.equals(isbn)){
-                book = item
-            }
+    private var quantity: Int = 0
+
+    fun attachView(view:View){
+        this.view = view
+    }
+
+    fun detachView() {
+        this.view = null
+    }
+
+    fun initBook(book: Book){
+        this.book = book
+    }
+
+    fun initBasket(basket: Basket) {
+        this.basket = basket
+        if (basket.booksQuantitiesMap.containsKey(book)) {
+            quantity = basket.booksQuantitiesMap.getValue(book)
+            updateBasketButtons()
         }
     }
 
-//    fun initBasket(mBasket: Basket) {
-//        this.basket = mBasket
-//    }
-
-    private fun setTitre(titre: String?) {
-        view.setTitre(titre)
+    private fun setTitre(titre: String) {
+        view?.setTitre(titre)
     }
 
-    private fun setCover(cover: String?) {
-        view.setCover(cover)
+    private fun setCover(cover: String) {
+        view?.setCover(cover)
     }
 
-    private fun setSynopsis(resume: ArrayList<String>?) {
-        view.setResume(resume)
+    private fun setSynopsis(resume: ArrayList<String>) {
+        view?.setResume(resume)
     }
 
     private fun setPrice(price: Float?) {
-        view.setPrice(price)
+        view?.setPrice(price)
     }
 
-    fun getBook() {
-        updateBook()
-        updateBasketButtons()
+
+    fun updateViewBook() {
+        setTitre(book.title)
+        setCover(book.cover)
+        setSynopsis(book.synopsis)
+        setPrice(book.price.toFloat())
     }
 
-    private fun updateBook() {
-        setTitre(book?.title)
-        setCover(book?.cover)
-        setSynopsis(book?.synopsis)
-        setPrice(book?.price?.toFloat())
-    }
-
-    private fun updateBasketButtons() {
-        if (basket.booksQuantitiesMap.containsKey(book)) {
-            view.setBookInBasket(basket.booksQuantitiesMap[book])
+    fun updateBasketButtons() {
+        if (quantity > 0) {
+            view?.setBookInBasket(quantity)
         } else {
-            view.setNotInBasket()
+            view?.setNotInBasket()
         }
     }
-//
-//    fun addToBasket() {
-//        basket.booksQuantitiesMap.put(book?,1)
-//        view.setBookInBasket(basket.booksQuantitiesMap[book])
-//
-//    }
 
-//    fun removeFromBasket() {
-//        basket?.booksQuantitiesMap.remove(book)
-//        view.setNotInBasket()
-//    }
+    fun addToBasket() {
+        quantity = 1
+        basket.booksQuantitiesMap[book] = 1
+        view?.setBookInBasket(quantity)
 
-//    fun editQuantityinBasket(newVal: Int) {
-//        for (entry in basket.booksQuantitiesMap.entries) {
-//            if (entry.key == book) {
-//                entry.setValue(newVal)
-//            }
-//        }
-//        view.setBookInBasket(newVal)
-//        view.hideNumberPicker()
-//    }
+    }
 
-//    fun selectQuantityInBasket() {
-//        view.showNumberPicker(book?.title, basket.booksQuantitiesMap.get(book))
-//    }
+    fun removeFromBasket() {
+        quantity = 0
+        basket.booksQuantitiesMap.remove(book)
+        view?.setNotInBasket()
+    }
+
+    fun editQuantityinBasket(newVal: Int) {
+        quantity = newVal
+        basket.booksQuantitiesMap[book] = quantity
+        view?.setBookInBasket(newVal)
+        view?.hideNumberPicker()
+    }
+
+    fun selectQuantityInBasket() {
+        view?.showNumberPicker(book.title, quantity)
+    }
+
+    fun sendBasketForResult(intent: Intent) {
+        intent.putExtra(Utils.EXTRA_CONTENT_BASKET, basket)
+    }
 
 
     interface View {
 
-        fun setTitre(titre: String?)
+        fun setTitre(titre: String)
 
-        fun setCover(cover: String?)
+        fun setCover(cover: String)
 
-        fun setResume(resume: ArrayList<String>?)
+        fun setResume(resume: ArrayList<String>)
 
         fun setPrice(price: Float?)
 
-        fun setBookInBasket(quantity: Int?)
+        fun setBookInBasket(quantity: Int)
 
         fun setNotInBasket()
+
+        fun hideNumberPicker()
+
+        fun showNumberPicker(title: String, quantity: Int)
     }
 
 }

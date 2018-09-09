@@ -1,9 +1,6 @@
 package cdreyfus.xebia_henri_potier.basket.promotion
 
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
+import com.google.gson.*
 import java.lang.reflect.Type
 
 class CommercialOfferDeserializer : JsonDeserializer<CommercialOffer> {
@@ -14,26 +11,11 @@ class CommercialOfferDeserializer : JsonDeserializer<CommercialOffer> {
         val type = jsonObject.get("type")
         if (type != null) {
             when (type.asString) {
-                "slice" -> return deserializeSlice(jsonObject)
-                "percentage" -> return deserializePercentage(jsonObject)
-                "minus" -> return deserializeMinus(jsonObject)
+                "slice" -> return Gson().fromJson(jsonObject, Slice::class.java)
+                "percentage" -> return Gson().fromJson(jsonObject, Percentage::class.java)
+                "minus" -> return Gson().fromJson(jsonObject, Minus::class.java)
             }
         }
         return null
-    }
-
-    fun deserializePercentage(json: JsonElement): Percentage {
-        val jsonObject = json.asJsonObject
-        return Percentage(jsonObject.get("value").asInt)
-    }
-
-    fun deserializeMinus(json: JsonElement): Minus {
-        val jsonObject = json.asJsonObject
-        return Minus(jsonObject.get("value").asInt)
-    }
-
-    fun deserializeSlice(json: JsonElement): Slice {
-        val jsonObject = json.asJsonObject
-        return Slice(jsonObject.get("value").asInt, jsonObject.get("sliceValue").asInt)
     }
 }

@@ -12,7 +12,7 @@ import java.util.*
 
 class BasketRecyclerAdapter(private val basketPresenter: BasketPresenter?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val bookIntegerLinkedHashMap: HashMap<Book, Int> = hashMapOf()
+    private val bookIntegerSortedMap: HashMap<Book, Int> = hashMapOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -22,26 +22,24 @@ class BasketRecyclerAdapter(private val basketPresenter: BasketPresenter?) : Rec
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val book = bookIntegerLinkedHashMap.entries.toTypedArray()[position].key
-        val quantity:Int = bookIntegerLinkedHashMap.entries.toTypedArray()[position].value
+        val book = bookIntegerSortedMap.entries.toTypedArray()[position].key
+        val quantity:Int = bookIntegerSortedMap.entries.toTypedArray()[position].value
 
         val basketItemHolder = holder as BasketItemHolder
         basketItemHolder.setItem(book, quantity)
 
         basketItemHolder.itemView.setOnClickListener {
-            basketPresenter?.initBook(book)
-            basketPresenter?.setNumberPicker()
+            basketPresenter?.setNumberPicker(book)
         }
     }
 
     override fun getItemCount(): Int {
-        return bookIntegerLinkedHashMap.size
+        return bookIntegerSortedMap.size
     }
 
     fun addAll(collection: HashMap<Book, Int>) {
-        bookIntegerLinkedHashMap.putAll(collection)
+        bookIntegerSortedMap.putAll(collection)
     }
-
 
     class BasketItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -49,7 +47,7 @@ class BasketRecyclerAdapter(private val basketPresenter: BasketPresenter?) : Rec
             Picasso.get().load(book.cover).into(itemView.basket_item_image)
             itemView.basket_item_label.text = book.title
             itemView.basket_item_price.text = String.format("%s €", book.price)
-            itemView.item_basket_quantity.text = String.format("x %s", quantity)
+            itemView.basket_item_quantity.text = String.format("x %s", quantity)
         }
 
     }

@@ -1,8 +1,27 @@
 package cdreyfus.xebia_henri_potier.basket.promotion
 
-abstract class CommercialOffer {
+sealed class CommercialOffer(var type:String) {
 
-    var type: String? = null
     abstract fun applyOffer(basketOffer: Float): Float
+}
 
+data class Minus(val value: Int) : CommercialOffer("minus") {
+
+    override fun applyOffer(basketOffer: Float): Float {
+        return basketOffer - value
+    }
+}
+
+data class Percentage(var value: Int) : CommercialOffer("percentage") {
+
+    override fun applyOffer(basketOffer: Float): Float {
+        return basketOffer * (1 - value.toFloat() / 100)
+    }
+}
+
+class Slice(var value: Int, var sliceValue: Int) : CommercialOffer("slice") {
+
+    override fun applyOffer(basketOffer: Float): Float {
+        return  basketOffer - basketOffer.toInt() / sliceValue * value
+    }
 }

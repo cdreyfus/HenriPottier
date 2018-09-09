@@ -1,10 +1,8 @@
 package cdreyfus.xebia_henri_potier
 
 import android.app.Application
-import cdreyfus.xebia_henri_potier.basket.Basket
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffer
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferApi
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOfferDeserializer
+import android.os.Build
+import cdreyfus.xebia_henri_potier.basket.promotion.*
 import cdreyfus.xebia_henri_potier.book.BookApi
 import cdreyfus.xebia_henri_potier.logs.FileLoggingTree
 import com.facebook.stetho.Stetho
@@ -14,18 +12,20 @@ import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class HenriPotierApplication : Application() {
 
 
     override fun onCreate() {
         super.onCreate()
-        Stetho.initializeWithDefaults(this)
+        if (!isRoboUnitTest()) {
+            Stetho.initializeWithDefaults(this)
+        }
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -33,9 +33,10 @@ class HenriPotierApplication : Application() {
         Timber.plant(FileLoggingTree(applicationContext))
     }
 
+    private fun isRoboUnitTest(): Boolean {
+        return "robolectric" == Build.FINGERPRINT
+    }
     companion object {
-
-        var basket: Basket? = null
 
         fun createBookApi(): BookApi {
             return setRetrofit().create(BookApi::class.java)
@@ -45,7 +46,7 @@ class HenriPotierApplication : Application() {
             return setRetrofit().create(CommercialOfferApi::class.java)
         }
 
-        fun setRetrofit(): Retrofit {
+        private fun setRetrofit(): Retrofit {
             val gson = GsonBuilder()
                     .registerTypeAdapter(CommercialOffer::class.java, CommercialOfferDeserializer())
                     .create()
@@ -53,10 +54,10 @@ class HenriPotierApplication : Application() {
             return Retrofit.Builder()
                     .baseUrl("http://henri-potier.xebia.fr/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(setHttpClient())
                     .build()
         }
+
 
         fun setHttpClient(): OkHttpClient {
 

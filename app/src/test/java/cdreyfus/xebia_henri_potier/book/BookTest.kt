@@ -46,6 +46,5 @@ class BookTest {
         val fromParcel = Book.createFromParcel(parcel)
 
         assert(fromParcel == book)
-
     }
 }

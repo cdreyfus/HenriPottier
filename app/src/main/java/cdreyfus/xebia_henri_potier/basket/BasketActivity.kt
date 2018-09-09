@@ -1,5 +1,6 @@
 package cdreyfus.xebia_henri_potier.basket
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -7,14 +8,17 @@ import android.view.View
 import android.widget.NumberPicker
 import cdreyfus.xebia_henri_potier.R
 import cdreyfus.xebia_henri_potier.book.Book
-import cdreyfus.xebia_henri_potier.utils.Utils
+import cdreyfus.xebia_henri_potier.utils.Utils.BASKET_CONTENT
+import cdreyfus.xebia_henri_potier.utils.Utils.EXTRA_CONTENT_BASKET
 import com.cuiweiyou.numberpickerdialog.NumberPickerDialog
 import kotlinx.android.synthetic.main.activity_basket.*
 import java.util.*
+import kotlin.collections.HashMap
+
 
 class BasketActivity : AppCompatActivity(), BasketPresenter.View {
 
-    private var basketPresenter: BasketPresenter? = null
+    private var basketPresenter: BasketPresenter = BasketPresenter()
     private var basketAdapter: BasketRecyclerAdapter? = null
     private var numberPickerDialog: NumberPickerDialog? = null
 
@@ -22,25 +26,28 @@ class BasketActivity : AppCompatActivity(), BasketPresenter.View {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_basket)
+
         supportActionBar?.setTitle(R.string.basket)
-        basketPresenter = BasketPresenter(this)
+        basketPresenter.attachView(this)
 
-        if (intent.hasExtra(Utils.EXTRA_LIST_BOOKS)) {
-            //Basket basket = getIntent().getParcelableExtra(EXTRA_BOOK_ID);
-            val basket = intent.extras.get(Utils.EXTRA_LIST_BOOKS) as Basket
-
-            basketPresenter?.setBasket(basket)
+        if(intent.hasExtra(EXTRA_CONTENT_BASKET)){
+           val basket = intent.extras?.getParcelable(EXTRA_CONTENT_BASKET) as Basket
+            basketPresenter.setBasket(basket)
         }
 
         basketAdapter = BasketRecyclerAdapter(basketPresenter)
         initRecycler()
-
     }
 
     override fun onResume() {
         super.onResume()
-        basketPresenter?.updateBasketContent()
-        basketPresenter?.setPrices()
+        basketPresenter.updateBasketContent()
+        basketPresenter.setPrices()
+    }
+
+    override fun onDestroy() {
+        basketPresenter.detachView()
+        super.onDestroy()
     }
 
     private fun initRecycler() {
@@ -74,19 +81,19 @@ class BasketActivity : AppCompatActivity(), BasketPresenter.View {
         activity_basket_list.visibility = View.GONE
     }
 
-    override fun showNumberPicker(title: String?, quantity: Int?) {
+    override fun showNumberPicker(book: Book, quantity: Int) {
 
         numberPickerDialog = NumberPickerDialog(
                 this,
-                title,
-                fun(numberPicker: NumberPicker, newVal:Int, oldVal: Int){
-                    basketPresenter?.editQuantityBook(newVal)
-                    basketPresenter?.updateBasketContent()
-                    basketPresenter?.setPrices()
+                book.title,
+                fun(_: NumberPicker, _:Int, newVal: Int){
+                    basketPresenter.setBookInBasket(book, newVal)
+                    basketPresenter.updateBasketContent()
+                    basketPresenter.setPrices()
                 },
                 10,
                 1,
-                quantity!!
+                quantity
                 )
 
         numberPickerDialog?.show()
@@ -95,6 +102,14 @@ class BasketActivity : AppCompatActivity(), BasketPresenter.View {
 
     override fun hideNumberPicker() {
         numberPickerDialog?.hide()
+    }
+
+    override fun onBackPressed() {
+        val returnIntent = Intent()
+        returnIntent.flags = Intent.FLAG_ACTIVITY_FORWARD_RESULT
+        basketPresenter.sendBasketForResult(returnIntent)
+        setResult(BASKET_CONTENT, returnIntent)
+        finish()
     }
 }
 

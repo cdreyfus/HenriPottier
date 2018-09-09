@@ -2,8 +2,11 @@ package cdreyfus.xebia_henri_potier.utils
 
 object Utils {
 
-    val EXTRA_BOOK_ID = "EXTRA_BOOK_ID"
-    val EXTRA_LIST_BOOKS = "EXTRA_LIST_BOOKS"
-    val CATALOGUE = "CATALOGUE"
-    val SHARED_PREFS = "HenriPotierSharedPrefs"
+    const val EXTRA_BOOK = "EXTRA_BOOK"
+    const val CATALOGUE = "CATALOGUE"
+
+    const val EXTRA_CONTENT_BASKET = "EXTRA_CONTENT_BASKET"
+    const val BASKET_CONTENT = 101
+
+    const val SHARED_PREFS = "HenriPotierSharedPrefs"
 }

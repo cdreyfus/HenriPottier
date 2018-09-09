@@ -1,28 +1,36 @@
 package cdreyfus.xebia_henri_potier.basket
 
-import android.annotation.SuppressLint
+import android.content.Intent
 import cdreyfus.xebia_henri_potier.HenriPotierApplication
-import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersResponse
+import cdreyfus.xebia_henri_potier.basket.promotion.CommercialOffersList
 import cdreyfus.xebia_henri_potier.book.Book
+import cdreyfus.xebia_henri_potier.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
-import java.util.*
+import java.util.Comparator
 
-class BasketPresenter(private val view: View) {
+class BasketPresenter {
 
+    private var view:View? = null
     private var basket: Basket = Basket()
-    private var book: Book? = null
 
+    fun attachView(view:View){
+        this.view = view
+    }
 
-    fun setBasket(basket: Basket) {
+    fun detachView(){
+        this.view = null
+    }
+
+    fun setBasket(basket: Basket){
         this.basket = basket
     }
 
-    private fun generatePromoCode(map: HashMap<Book, Int>): String {
+    fun generatePromoCode(map: HashMap<Book, Int>): String {
         var promotionCode = StringBuilder()
-        if(map.isNotEmpty()) {
+        if (map.isNotEmpty()) {
             for ((key, value) in map) {
                 for (i in 0 until value) {
                     promotionCode.append(String.format("%s,", key.isbn))
@@ -33,7 +41,7 @@ class BasketPresenter(private val view: View) {
         return promotionCode.toString()
     }
 
-    private fun calculateRegularPrice(map: HashMap<Book, Int>): Float {
+    fun calculateRegularPrice(map: HashMap<Book, Int>): Float {
         var regularPrice = 0f
         for ((key, value) in map) {
             regularPrice += (key.price * value).toFloat()
@@ -41,13 +49,12 @@ class BasketPresenter(private val view: View) {
         return regularPrice
     }
 
-    @SuppressLint("CheckResult")
     fun setPrices() {
 
         val regularPrice = calculateRegularPrice(basket.booksQuantitiesMap)
         val promoCode = generatePromoCode(basket.booksQuantitiesMap)
 
-        view.setRegularPrice(regularPrice)
+        view?.setRegularPrice(regularPrice)
 
         if (basket.booksQuantitiesMap.isNotEmpty()) {
 
@@ -56,57 +63,54 @@ class BasketPresenter(private val view: View) {
             val commercialOfferRequest = commercialOfferApi.getCommercialOffer(promoCode)
 
 
-            commercialOfferRequest.enqueue(object : Callback<CommercialOffersResponse> {
-                override fun onFailure(call: Call<CommercialOffersResponse>, t: Throwable) {
+            commercialOfferRequest.enqueue(object : Callback<CommercialOffersList> {
+                override fun onFailure(call: Call<CommercialOffersList>, t: Throwable) {
                     Timber.d(t.localizedMessage)
                 }
 
-                override fun onResponse(call: Call<CommercialOffersResponse>, response: Response<CommercialOffersResponse>) {
-                    val commercialOffersResponse: CommercialOffersResponse? = response.body()
-                    val finalPrice = applyBestCommercialOffer(commercialOffersResponse, regularPrice)
-                    view.setFinalPrice(finalPrice)
-                    view.setPromoValue(finalPrice - regularPrice)
+                override fun onResponse(call: Call<CommercialOffersList>, response: Response<CommercialOffersList>) {
+                    val commercialOffers: CommercialOffersList? = response.body()
+                    val finalPrice = applyBestCommercialOffer(commercialOffers, regularPrice)
+                    println(finalPrice)
+                    view?.setFinalPrice(finalPrice)
+                    view?.setPromoValue(finalPrice - regularPrice)
                 }
             })
         } else {
-            view.setFinalPrice(regularPrice)
-            view.setPromoValue(0f)
+            view?.setFinalPrice(regularPrice)
+            view?.setPromoValue(0f)
         }
     }
 
     fun updateBasketContent() {
         if (basket.booksQuantitiesMap.isEmpty()) {
-            view.showEmpty()
+            view?.showEmpty()
         } else {
-            view.showBooks(basket.booksQuantitiesMap)
+            view?.showBooks(basket.booksQuantitiesMap)
         }
     }
 
-    fun initBook(book: Book) {
-        this.book = book
-    }
-
-    fun setNumberPicker() {
-        view.showNumberPicker(book?.title, basket.booksQuantitiesMap[book])
-    }
-
-
-    fun editQuantityBook(quantity: Int) {
-        for (entry in basket.booksQuantitiesMap.entries) {
-            if (entry.key == book) {
-                entry.setValue(quantity)
-            }
-        }
-    }
-
-    fun applyBestCommercialOffer(commercialOffersResponse: CommercialOffersResponse?, regularPrice: Float): Float {
+    fun applyBestCommercialOffer(commercialOffers: CommercialOffersList?, regularPrice: Float): Float {
         var minimumValue = regularPrice
-        if(commercialOffersResponse != null) {
-            for (commercialOffer in commercialOffersResponse.getCommercialOffers()) {
+        if (commercialOffers != null) {
+            for (commercialOffer in commercialOffers.offers){
                 minimumValue = Math.min(minimumValue, commercialOffer.applyOffer(regularPrice))
             }
         }
         return minimumValue
+    }
+
+    fun setBookInBasket(book: Book, quantity: Int) {
+        basket.booksQuantitiesMap[book] = quantity
+    }
+
+
+    fun setNumberPicker(book: Book) {
+        view?.showNumberPicker(book, basket.booksQuantitiesMap.getValue(book))
+    }
+
+    fun sendBasketForResult(intent: Intent) {
+        intent.putExtra(Utils.EXTRA_CONTENT_BASKET, basket)
     }
 
     interface View {
@@ -121,7 +125,7 @@ class BasketPresenter(private val view: View) {
 
         fun showEmpty()
 
-        fun showNumberPicker(title: String?, quantity: Int?)
+        fun showNumberPicker(book: Book, quantity: Int)
 
         fun hideNumberPicker()
 

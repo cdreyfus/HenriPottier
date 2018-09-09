@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_catalogue_view.view.*
 
 
 class CatalogueAdapter internal constructor(
-        val cataloguePresenter: CataloguePresenter?, val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        val cataloguePresenter: CataloguePresenter, val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val bookList: MutableList<Book> = ArrayList()
 
@@ -44,9 +44,9 @@ class CatalogueAdapter internal constructor(
 
     internal inner class CatalogueHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var itemLabel: TextView = itemView.catalogue_item_label
-        var imageView: ImageView = itemView.catalogue_item_image
-        var itemPrice: TextView = itemView.catalogue_item_price
+        private var itemLabel: TextView = itemView.catalogue_item_label
+        private var imageView: ImageView = itemView.catalogue_item_image
+        private var itemPrice: TextView = itemView.catalogue_item_price
 
         fun setUpItem(book: Book) {
 
@@ -55,7 +55,7 @@ class CatalogueAdapter internal constructor(
             itemLabel.text = book.title
             itemPrice.text = String.format("%s €", book.price)
 
-            itemView.setOnClickListener { cataloguePresenter?.clickOnBook(book.isbn) }
+            itemView.setOnClickListener { cataloguePresenter.clickOnBook(book) }
         }
     }
 }

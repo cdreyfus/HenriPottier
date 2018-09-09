@@ -59,7 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/add_to_basket"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="clickAddToBasket"/>
 
             <Button
                 android:id="@+id/activity_book_remove_from_basket_button"
@@ -69,7 +70,8 @@
                 android:layout_marginEnd="1dp"
                 android:layout_weight="1"
                 android:text="@string/remove_from_basket"
-                tools:visibility="gone" />
+                tools:visibility="gone"
+                android:onClick="clickRemoveFromBasket"/>
 
             <Button
                 android:id="@+id/activity_book_edit_quantity_button"
@@ -78,7 +80,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="1dp"
                 android:layout_weight="1"
-                tools:visibility="gone" />
+                tools:visibility="gone"
+                android:onClick="clickEditQuantity"/>
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>

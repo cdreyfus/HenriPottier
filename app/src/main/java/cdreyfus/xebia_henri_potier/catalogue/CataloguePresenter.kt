@@ -1,11 +1,12 @@
 package cdreyfus.xebia_henri_potier.catalogue
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.SharedPreferences
 import cdreyfus.xebia_henri_potier.HenriPotierApplication
+import cdreyfus.xebia_henri_potier.basket.Basket
 import cdreyfus.xebia_henri_potier.book.Book
 import cdreyfus.xebia_henri_potier.book.BookApi
-import cdreyfus.xebia_henri_potier.loadCatalogue
 import cdreyfus.xebia_henri_potier.utils.Utils
 import com.google.gson.Gson
 import org.json.JSONArray
@@ -17,16 +18,32 @@ import timber.log.Timber
 import java.util.*
 
 
-class CataloguePresenter(private val view: View, private val sharedPrefs: SharedPreferences) {
+class CataloguePresenter {
 
-    private fun saveCatalogue(books: ArrayList<Book>?) {
-        val editor = sharedPrefs.edit()
-        editor.clear()
-        val bookSet = books!!
+    private var view: View? = null
+    private var basket: Basket = Basket()
+    private var sharedPrefs:SharedPreferences? = null
+
+    fun attachView(view: View){
+        this.view = view
+    }
+
+    fun detachView(){
+        view = null
+    }
+
+    fun setSharedPrefs(sharedPrefs: SharedPreferences){
+        this.sharedPrefs = sharedPrefs
+    }
+
+    private fun saveCatalogue(books: ArrayList<Book>) {
+        val editor = sharedPrefs?.edit()
+        editor?.clear()
+        val bookSet = books
                 .map { Gson().toJson(it) }
                 .toHashSet()
-        editor.putStringSet(Utils.CATALOGUE, bookSet)
-        editor.apply()
+        editor?.putStringSet(Utils.CATALOGUE, bookSet)
+        editor?.apply()
     }
 
 
@@ -42,18 +59,17 @@ class CataloguePresenter(private val view: View, private val sharedPrefs: Shared
             }
 
             override fun onResponse(call: Call<ArrayList<Book>>, response: Response<ArrayList<Book>>) {
-                val books: ArrayList<Book>? = response.body()
-                if (books != null)
-                    for(book in books){
-                        book.order = books.indexOf(book)+1
-                    }
-                    saveCatalogue(books)
+                val books: ArrayList<Book> = response.body() as ArrayList<Book>
+                for (book in books) {
+                    book.order = books.indexOf(book) + 1
                 }
+                saveCatalogue(books)
+            }
         })
     }
 
     private fun generateBooks() {
-        val booksString = view.readContactJsonFile()
+        val booksString = view?.readContactJsonFile()
         val list: ArrayList<Book> = arrayListOf()
         try {
             val booksJson = JSONArray(booksString)
@@ -62,7 +78,7 @@ class CataloguePresenter(private val view: View, private val sharedPrefs: Shared
                 val bookString = bookJson.toString()
 
                 val book: Book = Gson().fromJson(bookString, Book::class.java)
-                book.order = i+1
+                book.order = i + 1
                 list.add(book)
             }
             saveCatalogue(list)
@@ -73,17 +89,30 @@ class CataloguePresenter(private val view: View, private val sharedPrefs: Shared
 
     }
 
-    fun setView() {
-        val listBooks: List<Book> = loadCatalogue(sharedPrefs).sortedBy { it.order }
+    fun setCatalogueView() {
+        val listBooks: List<Book> = loadCatalogue()!!.sortedBy { it.order }
         if (!listBooks.isEmpty()) {
-            view.showCatalogue(listBooks)
+            view?.showCatalogue(listBooks)
         } else {
-            view.showEmpty()
+            view?.showEmpty()
         }
     }
 
-    fun clickOnBook(isbn: String) {
-        view.onBookSelected(isbn)
+    private fun loadCatalogue(): ArrayList<Book>?{
+        val bookSet = sharedPrefs?.getStringSet(Utils.CATALOGUE, HashSet())
+        return bookSet?.mapTo(java.util.ArrayList()) { Gson().fromJson(it, Book::class.java) }
+    }
+
+    fun clickOnBook(book: Book) {
+        view?.onBookSelected(book)
+    }
+
+    fun sendBasket(intent: Intent) {
+        intent.putExtra(Utils.EXTRA_CONTENT_BASKET, basket)
+    }
+
+    fun setBasket(basket: Basket) {
+        this.basket = basket
     }
 
     interface View {
@@ -92,7 +121,7 @@ class CataloguePresenter(private val view: View, private val sharedPrefs: Shared
 
         fun showEmpty()
 
-        fun onBookSelected(isbn: String)
+        fun onBookSelected(book: Book)
 
         fun notConnected()
 
